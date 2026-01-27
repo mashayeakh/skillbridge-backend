@@ -1,15 +1,17 @@
 model TutorProfile {
     id              String  @id @default(uuid())
+    name            String
     bio             String
     hourlyRate      Float
     experienceYears Int
     rating          Float?
     isVerified      Boolean @default(false)
 
-    userId String @unique
+    // userId String @unique
     //   user            User             @relation(fields: [userId], references: [id])
 
-    categories TutorCategory[]
+    categories     TutorCategory[]
+    availabilities TutorAvailability[]
     // bookings   Booking[]       @relation("TutorProfileBookings")
 
     createdAt DateTime @default(now())

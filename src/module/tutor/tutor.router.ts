@@ -14,8 +14,13 @@ const router = express.Router();
 router.post("/", TutorController.createCategory);
 
 
+router.get("/", TutorController.getYourProfile);
 
 
+router.get("/:id", TutorController.getProfileById);
+
+
+router.put("/:id", TutorController.updateYourProfile);
 
 
 export const TutorRouter = router;

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { CategoriesRouter } from './../module/categories/categories.router';
 import { TutorRouter } from './../module/tutor/tutor.router';
+import { TutorCategoryRouter } from '../module/tutorCategory/tutorCategory.router';
+import { TutorAvailabilityRouter } from './../module/tutoravailability/availability.route';
 
 const route = Router();
 
@@ -9,6 +11,12 @@ route.use("/category", CategoriesRouter);
 
 //tutor
 route.use("/tutor", TutorRouter);
+
+//turtor Category 
+route.use("/tutor-category", TutorCategoryRouter);
+
+//tutor avalibality 
+route.use("/tutor-availability", TutorAvailabilityRouter);
 
 
 export default route;

@@ -1,13 +1,12 @@
-model TutorCategory {
+model TutorAvailability {
     id             String @id @default(uuid())
     tutorProfileId String
-    categoryId     String
 
-    //relationship
+    startTime DateTime
+    endTime   DateTime
+    isBooked  Boolean  @default(false)
+
     tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id])
-    category     Category     @relation(fields: [categoryId], references: [id])
 
     createdAt DateTime @default(now())
-
-    @@unique([tutorProfileId, categoryId])
 }

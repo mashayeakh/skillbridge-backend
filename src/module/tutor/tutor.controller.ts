@@ -27,4 +27,42 @@ export const TutorController = {
         }
     ),
 
+    //get your profile
+    getYourProfile: asyncHandler(
+        async (req: Request, res: Response) => {
+            res.status(200).json({
+                success: true,
+                message: "your profle retrieved",
+                data: await TutorService.getTutorProfile()
+            })
+        }
+    ),
+
+    //get profile by id
+    getProfileById: asyncHandler(
+        async (req: Request, res: Response) => {
+            const { id } = req.params;
+            res.status(200).json({
+                success: true,
+                message: "tutor profile by id retrieved",
+                data: await TutorService.getTutorProfileById(id as string)
+            })
+        }
+
+    ),
+
+    //update your profile
+    updateYourProfile: asyncHandler(
+        async (req: Request, res: Response) => {
+
+            // const { } =
+
+            res.status(200).json({
+                success: true,
+                message: "You profile updated",
+                data: await TutorService.updateTutorProfile(req.params.id as string, req.body)
+            })
+        }
+    )
+
 }

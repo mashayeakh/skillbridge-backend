@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'production') {
             console.log("👍 DB Connected");
             app.listen(port, () => {
                 console.log(`Server is running on http://localhost:${port}`);
-            })
+            }) 
         } catch (error) {
             console.log("👎 Connectin failed", error)
             //disconnect from databaase

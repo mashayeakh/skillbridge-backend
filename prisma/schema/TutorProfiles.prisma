@@ -1,0 +1,19 @@
+model TutorProfile {
+    tutorProfileId String @id @default(uuid())
+
+    bio             String  @db.Text
+    hourlyRate      String  @db.VarChar(50)
+    experienceYears Int
+    rating          Float   @default(0.0)
+    isVerified      Boolean @default(false)
+
+    userId     String
+    categoryId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // @@index([userId])
+    // @@index([categoryId])
+    // @@map("tutor_profiles")
+}

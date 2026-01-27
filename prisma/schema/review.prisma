@@ -1,0 +1,11 @@
+model Review {
+    reviewId  String  @id @default(uuid())
+    bookingId String?
+    studentId String?
+    tutorId   String?
+    rating    Int
+    commnet   String  @db.Text
+
+    createdAt DateTime @default(now())
+    // updatedAt DateTime @updatedAt
+}

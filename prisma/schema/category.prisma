@@ -1,0 +1,9 @@
+model Category {
+    categoryId  String @id @default(uuid())
+    name        String @db.VarChar(255) // max length 255
+    description String @db.Text // no length limit
+
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

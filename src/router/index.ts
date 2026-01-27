@@ -4,7 +4,7 @@ import { CategoriesRouter } from './../module/categories/categories.router';
 const route = Router();
 
 //test
-route.use("/test", CategoriesRouter);
+route.use("/category", CategoriesRouter);
 
 
 export default route;

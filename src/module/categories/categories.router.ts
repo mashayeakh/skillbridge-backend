@@ -4,7 +4,19 @@ import { CategoriesController } from './categories.controller';
 
 const router = express.Router();
 
-router.get("/", CategoriesController.getTest);
+//test
+// router.get("/", CategoriesController.getTest);
+
+//get all
+router.get("/", CategoriesController.getAllCategories);
+
+//create
+router.post("/", CategoriesController.createCategory);
+
+
+
+
+
 
 export const CategoriesRouter = router;
 

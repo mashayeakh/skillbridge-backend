@@ -2,6 +2,7 @@ import express from "express";
 import { prisma } from "./lib/prisma"; // make sure this exists
 import { CategoriesRouter } from './module/categories/categories.router';
 import route from './router/index';
+import { globalError } from './middleware/globalErrorHandler';
 
 export const app = express();
 
@@ -15,6 +16,9 @@ app.get("/", (req, res) => {
 
 
 app.use("/api", route);
+
+//global err handler
+app.use(globalError)
 
 
 // // TEMP: Test Prisma insert

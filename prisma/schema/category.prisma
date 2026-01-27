@@ -1,11 +1,11 @@
 model Category {
-    categoryId  String @id @default(uuid())
-    name        String @unique @db.VarChar(255) // max length 255
-    description String @db.Text // no length limit
+    id          String  @id @default(uuid())
+    name        String
+    description String?
+    isActive    Boolean @default(true)
 
-    isActive  Boolean  @default(true)
+    tutors TutorCategory[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
-    @@map("categories")
 }

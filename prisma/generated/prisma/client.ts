@@ -27,8 +27,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more TutorProfiles
- * const tutorProfiles = await prisma.tutorProfile.findMany()
+ * // Fetch zero or more Bookings
+ * const bookings = await prisma.booking.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -38,15 +38,10 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model TutorProfile
+ * Model Booking
  * 
  */
-export type TutorProfile = Prisma.TutorProfileModel
-/**
- * Model bookings
- * 
- */
-export type bookings = Prisma.bookingsModel
+export type Booking = Prisma.BookingModel
 /**
  * Model Category
  * 
@@ -57,3 +52,13 @@ export type Category = Prisma.CategoryModel
  * 
  */
 export type Review = Prisma.ReviewModel
+/**
+ * Model TutorCategory
+ * 
+ */
+export type TutorCategory = Prisma.TutorCategoryModel
+/**
+ * Model TutorProfile
+ * 
+ */
+export type TutorProfile = Prisma.TutorProfileModel

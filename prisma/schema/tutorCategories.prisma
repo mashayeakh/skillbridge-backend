@@ -1,0 +1,12 @@
+model TutorCategory {
+    id             String @id @default(uuid())
+    tutorProfileId String
+    categoryId     String
+
+    tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id])
+    category     Category     @relation(fields: [categoryId], references: [id])
+
+    createdAt DateTime @default(now())
+
+    @@unique([tutorProfileId, categoryId])
+}

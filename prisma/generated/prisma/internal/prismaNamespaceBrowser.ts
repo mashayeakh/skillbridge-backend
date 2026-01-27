@@ -51,10 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  TutorProfile: 'TutorProfile',
-  bookings: 'bookings',
+  Booking: 'Booking',
   Category: 'Category',
-  Review: 'Review'
+  Review: 'Review',
+  TutorCategory: 'TutorCategory',
+  TutorProfile: 'TutorProfile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -73,25 +74,8 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const TutorProfileScalarFieldEnum = {
-  tutorProfileId: 'tutorProfileId',
-  bio: 'bio',
-  hourlyRate: 'hourlyRate',
-  experienceYears: 'experienceYears',
-  rating: 'rating',
-  isVerified: 'isVerified',
-  userId: 'userId',
-  categoryId: 'categoryId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TutorProfileScalarFieldEnum = (typeof TutorProfileScalarFieldEnum)[keyof typeof TutorProfileScalarFieldEnum]
-
-
-export const BookingsScalarFieldEnum = {
-  bookingId: 'bookingId',
-  bio: 'bio',
+export const BookingScalarFieldEnum = {
+  id: 'id',
   studentId: 'studentId',
   tutorId: 'tutorId',
   startTime: 'startTime',
@@ -102,11 +86,11 @@ export const BookingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type BookingsScalarFieldEnum = (typeof BookingsScalarFieldEnum)[keyof typeof BookingsScalarFieldEnum]
+export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
-  categoryId: 'categoryId',
+  id: 'id',
   name: 'name',
   description: 'description',
   isActive: 'isActive',
@@ -118,16 +102,39 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 
 
 export const ReviewScalarFieldEnum = {
-  reviewId: 'reviewId',
+  id: 'id',
   bookingId: 'bookingId',
-  studentId: 'studentId',
-  tutorId: 'tutorId',
   rating: 'rating',
-  commnet: 'commnet',
+  comment: 'comment',
   createdAt: 'createdAt'
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const TutorCategoryScalarFieldEnum = {
+  id: 'id',
+  tutorProfileId: 'tutorProfileId',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt'
+} as const
+
+export type TutorCategoryScalarFieldEnum = (typeof TutorCategoryScalarFieldEnum)[keyof typeof TutorCategoryScalarFieldEnum]
+
+
+export const TutorProfileScalarFieldEnum = {
+  id: 'id',
+  bio: 'bio',
+  hourlyRate: 'hourlyRate',
+  experienceYears: 'experienceYears',
+  rating: 'rating',
+  isVerified: 'isVerified',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TutorProfileScalarFieldEnum = (typeof TutorProfileScalarFieldEnum)[keyof typeof TutorProfileScalarFieldEnum]
 
 
 export const SortOrder = {

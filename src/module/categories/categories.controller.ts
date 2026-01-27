@@ -42,7 +42,8 @@ export const CategoriesController = {
                 data: result
             })
         }
-    )
+    ),
 
+    
 
 }

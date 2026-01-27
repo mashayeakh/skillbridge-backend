@@ -1,19 +1,17 @@
 model TutorProfile {
-    tutorProfileId String @id @default(uuid())
-
-    bio             String  @db.Text
-    hourlyRate      String  @db.VarChar(50)
+    id              String  @id @default(uuid())
+    bio             String
+    hourlyRate      Float
     experienceYears Int
-    rating          Float   @default(0.0)
+    rating          Float?
     isVerified      Boolean @default(false)
 
-    userId     String
-    categoryId String
+    userId String @unique
+    //   user            User             @relation(fields: [userId], references: [id])
+
+    categories TutorCategory[]
+    // bookings   Booking[]       @relation("TutorProfileBookings")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
-    // @@index([userId])
-    // @@index([categoryId])
-    // @@map("tutor_profiles")
 }

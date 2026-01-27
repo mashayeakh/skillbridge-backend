@@ -1,18 +1,25 @@
+model Booking {
+    id String @id @default(uuid())
+
+    studentId String
+    tutorId   String
+
+    //   student     User           @relation("StudentBookings", fields: [studentId], references: [id])
+    // tutor User @relation("TutorBookings", fields: [tutorId], references: [id])
+
+    startTime DateTime
+    endTime   DateTime
+    status    BookingStatus
+    price     Float
+
+    review Review?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 enum BookingStatus {
     CONFIRMED
     CANCELLED
     COMPLETED
-}
-
-model bookings {
-    bookingId String        @id @default(uuid())
-    bio       String        @db.Text // no length limit
-    studentId String?
-    tutorId   String?
-    startTime DateTime
-    endTime   DateTime
-    status    BookingStatus @default(CONFIRMED)
-    price     Int
-    createdAt DateTime      @default(now())
-    updatedAt DateTime      @updatedAt
 }

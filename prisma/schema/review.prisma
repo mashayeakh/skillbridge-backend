@@ -1,11 +1,10 @@
 model Review {
-    reviewId  String  @id @default(uuid())
-    bookingId String?
-    studentId String?
-    tutorId   String?
+    id        String  @id @default(uuid())
+    bookingId String  @unique
     rating    Int
-    commnet   String  @db.Text
+    comment   String?
+
+    booking Booking @relation(fields: [bookingId], references: [id])
 
     createdAt DateTime @default(now())
-    // updatedAt DateTime @updatedAt
 }

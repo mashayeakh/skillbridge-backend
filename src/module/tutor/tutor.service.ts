@@ -74,6 +74,10 @@ export const TutorService = {
             include: {
                 categories:
                 {
+                    // include:
+                    // {
+                    //     category: true,
+                    // }
                     select: {
                         category: {
                             select: {

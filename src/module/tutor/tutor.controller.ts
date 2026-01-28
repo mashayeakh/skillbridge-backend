@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { TutorService } from './tutor.service';
 import { prisma } from '../../lib/prisma';
 import { Role } from '../../types/role';
+import { AppError } from '../../error/appErrors';
 
 
 export const TutorController = {
@@ -60,15 +61,20 @@ export const TutorController = {
     ,
 
     //get your profile
-    getYourProfile: asyncHandler(
-        async (req: Request, res: Response) => {
-            res.status(200).json({
-                success: true,
-                message: "your profle retrieved",
-                data: await TutorService.getTutorProfile()
-            })
-        }
-    ),
+    getYourProfile: asyncHandler(async (req: Request, res: Response) => {
+        const userId = req.user?.id;
+        console.log("user id ", userId)
+        if (!userId) throw new AppError(401, "Unauthorized");
+
+        const profile = await TutorService.getTutorProfile(userId);
+
+        res.status(200).json({
+            success: true,
+            message: "Your profile retrieved",
+            data: profile
+        });
+    }),
+
 
     //get profile by id
     getProfileById: asyncHandler(

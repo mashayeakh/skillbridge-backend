@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/", authMiddleware(Role.TUTOR), TutorController.createTutorProfile);
 
 
-router.get("/", TutorController.getYourProfile);
+router.get("/me", authMiddleware(Role.TUTOR), TutorController.getYourProfile);
 
 
 router.get("/all", TutorController.getAllTutors);

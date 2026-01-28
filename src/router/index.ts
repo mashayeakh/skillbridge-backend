@@ -4,6 +4,7 @@ import { TutorRouter } from './../module/tutor/tutor.router';
 import { TutorCategoryRouter } from '../module/tutorCategory/tutorCategory.router';
 import { TutorAvailabilityRouter } from './../module/tutoravailability/availability.route';
 import { BookingRouter } from './../module/bookings/bookings.route';
+import { StudentRouter } from "../module/student/student.route";
 
 const route = Router();
 
@@ -21,6 +22,9 @@ route.use("/tutor-availability", TutorAvailabilityRouter);
 
 //booking
 route.use("/booking", BookingRouter)
+
+//student
+route.use("/student", StudentRouter);
 
 
 export default route;

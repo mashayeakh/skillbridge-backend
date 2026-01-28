@@ -47,26 +47,55 @@ export const TutorService = {
         return result;
     },
 
-    async getTutorProfile() {
-        const result = await prisma.tutorProfile.findFirstOrThrow({
+    // const result = await prisma.tutorProfile.findFirstOrThrow({
+    //     include: {
+    //         categories: {
+    //             include: {
+    //                 category: {
+    //                     select: {
+    //                         id: true,
+    //                         name: true
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+    // console.log("your profile ", result)
+    // return {
+    //     ...result,
+    //     categories: result.categories.map(tc => tc.category)
+    // };
+
+    //your own profile
+    async getTutorProfile(userId: string) {
+        const result = await prisma.tutorProfile.findUnique({
+            where: { userId }, // find by userId
             include: {
-                categories: {
-                    include: {
+                categories:
+                {
+                    select: {
                         category: {
                             select: {
-                                id: true,
-                                name: true
+                                name: true,
+                                isActive: true,
                             }
                         }
                     }
+                },
+                availabilities: {
+                    select: {
+                        startTime: true,
+                        endTime: true,
+                        isBooked: true,
+                    }
                 }
-            }
+            } // optional, if you want categories
+
         });
-        console.log("your profile ", result)
-        return {
-            ...result,
-            categories: result.categories.map(tc => tc.category)
-        };
+
+        console.log("Your profile:", result);
+        return result;
     },
 
 

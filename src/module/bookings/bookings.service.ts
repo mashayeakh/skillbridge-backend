@@ -16,5 +16,6 @@ export const BookingService = {
 
         console.log({ tutor, student });
         // return await prisma.booking.create({ data: payload })
-    }
+    },
+
 }

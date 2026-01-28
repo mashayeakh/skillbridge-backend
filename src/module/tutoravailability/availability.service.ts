@@ -3,53 +3,35 @@ import { AppError } from './../../error/appErrors';
 import { prisma } from "../../lib/prisma"
 
 export const TutorAvailabilitySevice = {
-    async createAvaility(data: CreateAvailabilityInput) {
-
-
+    async createAvailability(data: CreateAvailabilityInput) {
         const { startTime, endTime, tutorProfileId } = data;
 
         if (new Date(startTime) >= new Date(endTime)) {
             throw new AppError(406, "End time must be after start time");
         }
 
-        // tutor exist
+        // Check if tutor profile exists
         const tutor = await prisma.tutorProfile.findUnique({
-            where: {
-                id: tutorProfileId
-            }
-        })
+            where: { id: tutorProfileId }
+        });
+        if (!tutor) throw new AppError(404, "Tutor profile not found");
 
-        if (!tutor) throw new AppError(404, "Tutor not exist")
-
-        const overLappingSlot = await prisma.tutorAvailability.findFirst({
+        // Check for overlapping slots
+        const overlapping = await prisma.tutorAvailability.findFirst({
             where: {
                 tutorProfileId,
-                startTime: {
-                    lt: endTime,
-                },
-                endTime: {
-                    gt: startTime,
-                },
-            },
+                startTime: { lt: endTime },
+                endTime: { gt: startTime }
+            }
         });
+        if (overlapping) throw new AppError(406, "Slot overlaps with an existing availability");
 
-
-
-        if (overLappingSlot) throw new AppError(406, "Availability slot overlaps with an existing slot");
-
-        //create
+        // Create availability slot
         const result = await prisma.tutorAvailability.create({
-            data: {
-                tutorProfileId,
-                startTime,
-                endTime
-            }
+            data: { tutorProfileId, startTime, endTime }
         });
-
-        console.log("REE ", result)
 
         return result;
-
     },
     //tutro availability
     async getTutorAvailability(tutorProfileId: string) {

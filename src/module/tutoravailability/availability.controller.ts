@@ -2,38 +2,43 @@ import { asyncHandler } from '../../utils/asyncHandler';
 import { Request, Response } from "express";
 import { TutorAvailabilitySevice } from './availability.service';
 import { AppError } from '../../error/appErrors';
+import { prisma } from '../../lib/prisma';
 
 
 export const TutorAvailabilityController = {
 
-    createSlots: asyncHandler(
-        async (req: Request, res: Response) => {
+    createSlots: asyncHandler(async (req: Request, res: Response) => {
+        console.log("🔥 Availability Controller Hit");
 
-            console.log("🔥 AVAILABILITY CONTROLLER HIT");
+        const userId = req.user?.id;
+        if (!userId) throw new AppError(401, "Unauthorized❌");
 
+        // Get tutor profile for logged-in user
+        const tutorProfile = await prisma.tutorProfile.findUnique({
+            where: { userId }
+        });
+        if (!tutorProfile) throw new AppError(404, "Tutor profile not found");
 
-            const { tutorProfileId, startTime, endTime } = req.body;
-
-            if (!tutorProfileId || !startTime || !endTime) {
-                throw new AppError(400, "Missing required fields");
-            }
-            const data = {
-                tutorProfileId: tutorProfileId,
-                startTime: new Date(startTime),
-                endTime: new Date(endTime)
-            }
-
-            console.log("DATA ", data)
-
-            console.log(typeof startTime, typeof endTime);
-
-
-            res.status(200).json({
-                success: true,
-                data: await TutorAvailabilitySevice.createAvaility(data)
-            })
+        const { startTime, endTime } = req.body;
+        if (!startTime || !endTime) {
+            throw new AppError(400, "Missing required fields");
         }
-    ),
+
+        const data = {
+            tutorProfileId: tutorProfile.id,
+            startTime: new Date(startTime),
+            endTime: new Date(endTime)
+        };
+
+        const created = await TutorAvailabilitySevice.createAvailability(data);
+
+        res.status(201).json({
+            success: true,
+            message: "Availability slot created",
+            data: created
+        });
+    }),
+
     //get tutor availability
     getAvailableSlots: asyncHandler(
         async (req: Request, res: Response) => {
@@ -45,5 +50,5 @@ export const TutorAvailabilityController = {
             })
         }
     )
-
 }
+

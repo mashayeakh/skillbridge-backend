@@ -1256,7 +1256,7 @@ export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[k
 export const BookingScalarFieldEnum = {
   id: 'id',
   studentId: 'studentId',
-  tutorId: 'tutorId',
+  tutorProfileId: 'tutorProfileId',
   startTime: 'startTime',
   endTime: 'endTime',
   status: 'status',
@@ -1320,7 +1320,7 @@ export const TutorProfileScalarFieldEnum = {
   hourlyRate: 'hourlyRate',
   experienceYears: 'experienceYears',
   rating: 'rating',
-  isVerified: 'isVerified',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

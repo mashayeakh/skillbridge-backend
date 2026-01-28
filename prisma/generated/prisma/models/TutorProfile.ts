@@ -45,7 +45,7 @@ export type TutorProfileMinAggregateOutputType = {
   hourlyRate: number | null
   experienceYears: number | null
   rating: number | null
-  isVerified: boolean | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -57,7 +57,7 @@ export type TutorProfileMaxAggregateOutputType = {
   hourlyRate: number | null
   experienceYears: number | null
   rating: number | null
-  isVerified: boolean | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,7 +69,7 @@ export type TutorProfileCountAggregateOutputType = {
   hourlyRate: number
   experienceYears: number
   rating: number
-  isVerified: number
+  userId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -95,7 +95,7 @@ export type TutorProfileMinAggregateInputType = {
   hourlyRate?: true
   experienceYears?: true
   rating?: true
-  isVerified?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,7 +107,7 @@ export type TutorProfileMaxAggregateInputType = {
   hourlyRate?: true
   experienceYears?: true
   rating?: true
-  isVerified?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -119,7 +119,7 @@ export type TutorProfileCountAggregateInputType = {
   hourlyRate?: true
   experienceYears?: true
   rating?: true
-  isVerified?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -218,7 +218,7 @@ export type TutorProfileGroupByOutputType = {
   hourlyRate: number
   experienceYears: number
   rating: number | null
-  isVerified: boolean
+  userId: string
   createdAt: Date
   updatedAt: Date
   _count: TutorProfileCountAggregateOutputType | null
@@ -253,11 +253,13 @@ export type TutorProfileWhereInput = {
   hourlyRate?: Prisma.FloatFilter<"TutorProfile"> | number
   experienceYears?: Prisma.IntFilter<"TutorProfile"> | number
   rating?: Prisma.FloatNullableFilter<"TutorProfile"> | number | null
-  isVerified?: Prisma.BoolFilter<"TutorProfile"> | boolean
+  userId?: Prisma.StringFilter<"TutorProfile"> | string
   createdAt?: Prisma.DateTimeFilter<"TutorProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TutorProfile"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   categories?: Prisma.TutorCategoryListRelationFilter
   availabilities?: Prisma.TutorAvailabilityListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
 }
 
 export type TutorProfileOrderByWithRelationInput = {
@@ -267,15 +269,18 @@ export type TutorProfileOrderByWithRelationInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
   categories?: Prisma.TutorCategoryOrderByRelationAggregateInput
   availabilities?: Prisma.TutorAvailabilityOrderByRelationAggregateInput
+  bookings?: Prisma.BookingOrderByRelationAggregateInput
 }
 
 export type TutorProfileWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId?: string
   AND?: Prisma.TutorProfileWhereInput | Prisma.TutorProfileWhereInput[]
   OR?: Prisma.TutorProfileWhereInput[]
   NOT?: Prisma.TutorProfileWhereInput | Prisma.TutorProfileWhereInput[]
@@ -284,12 +289,13 @@ export type TutorProfileWhereUniqueInput = Prisma.AtLeast<{
   hourlyRate?: Prisma.FloatFilter<"TutorProfile"> | number
   experienceYears?: Prisma.IntFilter<"TutorProfile"> | number
   rating?: Prisma.FloatNullableFilter<"TutorProfile"> | number | null
-  isVerified?: Prisma.BoolFilter<"TutorProfile"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TutorProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TutorProfile"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   categories?: Prisma.TutorCategoryListRelationFilter
   availabilities?: Prisma.TutorAvailabilityListRelationFilter
-}, "id">
+  bookings?: Prisma.BookingListRelationFilter
+}, "id" | "userId">
 
 export type TutorProfileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -298,7 +304,7 @@ export type TutorProfileOrderByWithAggregationInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TutorProfileCountOrderByAggregateInput
@@ -318,7 +324,7 @@ export type TutorProfileScalarWhereWithAggregatesInput = {
   hourlyRate?: Prisma.FloatWithAggregatesFilter<"TutorProfile"> | number
   experienceYears?: Prisma.IntWithAggregatesFilter<"TutorProfile"> | number
   rating?: Prisma.FloatNullableWithAggregatesFilter<"TutorProfile"> | number | null
-  isVerified?: Prisma.BoolWithAggregatesFilter<"TutorProfile"> | boolean
+  userId?: Prisma.StringWithAggregatesFilter<"TutorProfile"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TutorProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TutorProfile"> | Date | string
 }
@@ -330,11 +336,12 @@ export type TutorProfileCreateInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTutorProfileInput
   categories?: Prisma.TutorCategoryCreateNestedManyWithoutTutorProfileInput
   availabilities?: Prisma.TutorAvailabilityCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileUncheckedCreateInput = {
@@ -344,11 +351,12 @@ export type TutorProfileUncheckedCreateInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   categories?: Prisma.TutorCategoryUncheckedCreateNestedManyWithoutTutorProfileInput
   availabilities?: Prisma.TutorAvailabilityUncheckedCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileUpdateInput = {
@@ -358,11 +366,12 @@ export type TutorProfileUpdateInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTutorProfileNestedInput
   categories?: Prisma.TutorCategoryUpdateManyWithoutTutorProfileNestedInput
   availabilities?: Prisma.TutorAvailabilityUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTutorProfileNestedInput
 }
 
 export type TutorProfileUncheckedUpdateInput = {
@@ -372,11 +381,12 @@ export type TutorProfileUncheckedUpdateInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   categories?: Prisma.TutorCategoryUncheckedUpdateManyWithoutTutorProfileNestedInput
   availabilities?: Prisma.TutorAvailabilityUncheckedUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTutorProfileNestedInput
 }
 
 export type TutorProfileCreateManyInput = {
@@ -386,7 +396,7 @@ export type TutorProfileCreateManyInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -398,7 +408,6 @@ export type TutorProfileUpdateManyMutationInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -410,9 +419,14 @@ export type TutorProfileUncheckedUpdateManyInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TutorProfileNullableScalarRelationFilter = {
+  is?: Prisma.TutorProfileWhereInput | null
+  isNot?: Prisma.TutorProfileWhereInput | null
 }
 
 export type TutorProfileScalarRelationFilter = {
@@ -427,7 +441,7 @@ export type TutorProfileCountOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -445,7 +459,7 @@ export type TutorProfileMaxOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -457,7 +471,7 @@ export type TutorProfileMinOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrder
-  isVerified?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -466,6 +480,52 @@ export type TutorProfileSumOrderByAggregateInput = {
   hourlyRate?: Prisma.SortOrder
   experienceYears?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+}
+
+export type TutorProfileCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutUserInput
+  connect?: Prisma.TutorProfileWhereUniqueInput
+}
+
+export type TutorProfileUncheckedCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutUserInput
+  connect?: Prisma.TutorProfileWhereUniqueInput
+}
+
+export type TutorProfileUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutUserInput
+  upsert?: Prisma.TutorProfileUpsertWithoutUserInput
+  disconnect?: Prisma.TutorProfileWhereInput | boolean
+  delete?: Prisma.TutorProfileWhereInput | boolean
+  connect?: Prisma.TutorProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TutorProfileUpdateToOneWithWhereWithoutUserInput, Prisma.TutorProfileUpdateWithoutUserInput>, Prisma.TutorProfileUncheckedUpdateWithoutUserInput>
+}
+
+export type TutorProfileUncheckedUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutUserInput
+  upsert?: Prisma.TutorProfileUpsertWithoutUserInput
+  disconnect?: Prisma.TutorProfileWhereInput | boolean
+  delete?: Prisma.TutorProfileWhereInput | boolean
+  connect?: Prisma.TutorProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TutorProfileUpdateToOneWithWhereWithoutUserInput, Prisma.TutorProfileUpdateWithoutUserInput>, Prisma.TutorProfileUncheckedUpdateWithoutUserInput>
+}
+
+export type TutorProfileCreateNestedOneWithoutBookingsInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutBookingsInput, Prisma.TutorProfileUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutBookingsInput
+  connect?: Prisma.TutorProfileWhereUniqueInput
+}
+
+export type TutorProfileUpdateOneRequiredWithoutBookingsNestedInput = {
+  create?: Prisma.XOR<Prisma.TutorProfileCreateWithoutBookingsInput, Prisma.TutorProfileUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.TutorProfileCreateOrConnectWithoutBookingsInput
+  upsert?: Prisma.TutorProfileUpsertWithoutBookingsInput
+  connect?: Prisma.TutorProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TutorProfileUpdateToOneWithWhereWithoutBookingsInput, Prisma.TutorProfileUpdateWithoutBookingsInput>, Prisma.TutorProfileUncheckedUpdateWithoutBookingsInput>
 }
 
 export type TutorProfileCreateNestedOneWithoutAvailabilitiesInput = {
@@ -504,6 +564,150 @@ export type NullableFloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type TutorProfileCreateWithoutUserInput = {
+  id?: string
+  name: string
+  bio: string
+  hourlyRate: number
+  experienceYears: number
+  rating?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  categories?: Prisma.TutorCategoryCreateNestedManyWithoutTutorProfileInput
+  availabilities?: Prisma.TutorAvailabilityCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTutorProfileInput
+}
+
+export type TutorProfileUncheckedCreateWithoutUserInput = {
+  id?: string
+  name: string
+  bio: string
+  hourlyRate: number
+  experienceYears: number
+  rating?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  categories?: Prisma.TutorCategoryUncheckedCreateNestedManyWithoutTutorProfileInput
+  availabilities?: Prisma.TutorAvailabilityUncheckedCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTutorProfileInput
+}
+
+export type TutorProfileCreateOrConnectWithoutUserInput = {
+  where: Prisma.TutorProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+}
+
+export type TutorProfileUpsertWithoutUserInput = {
+  update: Prisma.XOR<Prisma.TutorProfileUpdateWithoutUserInput, Prisma.TutorProfileUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.TutorProfileCreateWithoutUserInput, Prisma.TutorProfileUncheckedCreateWithoutUserInput>
+  where?: Prisma.TutorProfileWhereInput
+}
+
+export type TutorProfileUpdateToOneWithWhereWithoutUserInput = {
+  where?: Prisma.TutorProfileWhereInput
+  data: Prisma.XOR<Prisma.TutorProfileUpdateWithoutUserInput, Prisma.TutorProfileUncheckedUpdateWithoutUserInput>
+}
+
+export type TutorProfileUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.StringFieldUpdateOperationsInput | string
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.TutorCategoryUpdateManyWithoutTutorProfileNestedInput
+  availabilities?: Prisma.TutorAvailabilityUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTutorProfileNestedInput
+}
+
+export type TutorProfileUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.StringFieldUpdateOperationsInput | string
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.TutorCategoryUncheckedUpdateManyWithoutTutorProfileNestedInput
+  availabilities?: Prisma.TutorAvailabilityUncheckedUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTutorProfileNestedInput
+}
+
+export type TutorProfileCreateWithoutBookingsInput = {
+  id?: string
+  name: string
+  bio: string
+  hourlyRate: number
+  experienceYears: number
+  rating?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTutorProfileInput
+  categories?: Prisma.TutorCategoryCreateNestedManyWithoutTutorProfileInput
+  availabilities?: Prisma.TutorAvailabilityCreateNestedManyWithoutTutorProfileInput
+}
+
+export type TutorProfileUncheckedCreateWithoutBookingsInput = {
+  id?: string
+  name: string
+  bio: string
+  hourlyRate: number
+  experienceYears: number
+  rating?: number | null
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  categories?: Prisma.TutorCategoryUncheckedCreateNestedManyWithoutTutorProfileInput
+  availabilities?: Prisma.TutorAvailabilityUncheckedCreateNestedManyWithoutTutorProfileInput
+}
+
+export type TutorProfileCreateOrConnectWithoutBookingsInput = {
+  where: Prisma.TutorProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.TutorProfileCreateWithoutBookingsInput, Prisma.TutorProfileUncheckedCreateWithoutBookingsInput>
+}
+
+export type TutorProfileUpsertWithoutBookingsInput = {
+  update: Prisma.XOR<Prisma.TutorProfileUpdateWithoutBookingsInput, Prisma.TutorProfileUncheckedUpdateWithoutBookingsInput>
+  create: Prisma.XOR<Prisma.TutorProfileCreateWithoutBookingsInput, Prisma.TutorProfileUncheckedCreateWithoutBookingsInput>
+  where?: Prisma.TutorProfileWhereInput
+}
+
+export type TutorProfileUpdateToOneWithWhereWithoutBookingsInput = {
+  where?: Prisma.TutorProfileWhereInput
+  data: Prisma.XOR<Prisma.TutorProfileUpdateWithoutBookingsInput, Prisma.TutorProfileUncheckedUpdateWithoutBookingsInput>
+}
+
+export type TutorProfileUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.StringFieldUpdateOperationsInput | string
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTutorProfileNestedInput
+  categories?: Prisma.TutorCategoryUpdateManyWithoutTutorProfileNestedInput
+  availabilities?: Prisma.TutorAvailabilityUpdateManyWithoutTutorProfileNestedInput
+}
+
+export type TutorProfileUncheckedUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.StringFieldUpdateOperationsInput | string
+  hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.TutorCategoryUncheckedUpdateManyWithoutTutorProfileNestedInput
+  availabilities?: Prisma.TutorAvailabilityUncheckedUpdateManyWithoutTutorProfileNestedInput
+}
+
 export type TutorProfileCreateWithoutAvailabilitiesInput = {
   id?: string
   name: string
@@ -511,10 +715,11 @@ export type TutorProfileCreateWithoutAvailabilitiesInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTutorProfileInput
   categories?: Prisma.TutorCategoryCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileUncheckedCreateWithoutAvailabilitiesInput = {
@@ -524,10 +729,11 @@ export type TutorProfileUncheckedCreateWithoutAvailabilitiesInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   categories?: Prisma.TutorCategoryUncheckedCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileCreateOrConnectWithoutAvailabilitiesInput = {
@@ -553,10 +759,11 @@ export type TutorProfileUpdateWithoutAvailabilitiesInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTutorProfileNestedInput
   categories?: Prisma.TutorCategoryUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTutorProfileNestedInput
 }
 
 export type TutorProfileUncheckedUpdateWithoutAvailabilitiesInput = {
@@ -566,10 +773,11 @@ export type TutorProfileUncheckedUpdateWithoutAvailabilitiesInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   categories?: Prisma.TutorCategoryUncheckedUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTutorProfileNestedInput
 }
 
 export type TutorProfileCreateWithoutCategoriesInput = {
@@ -579,10 +787,11 @@ export type TutorProfileCreateWithoutCategoriesInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTutorProfileInput
   availabilities?: Prisma.TutorAvailabilityCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileUncheckedCreateWithoutCategoriesInput = {
@@ -592,10 +801,11 @@ export type TutorProfileUncheckedCreateWithoutCategoriesInput = {
   hourlyRate: number
   experienceYears: number
   rating?: number | null
-  isVerified?: boolean
+  userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   availabilities?: Prisma.TutorAvailabilityUncheckedCreateNestedManyWithoutTutorProfileInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTutorProfileInput
 }
 
 export type TutorProfileCreateOrConnectWithoutCategoriesInput = {
@@ -621,10 +831,11 @@ export type TutorProfileUpdateWithoutCategoriesInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTutorProfileNestedInput
   availabilities?: Prisma.TutorAvailabilityUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTutorProfileNestedInput
 }
 
 export type TutorProfileUncheckedUpdateWithoutCategoriesInput = {
@@ -634,10 +845,11 @@ export type TutorProfileUncheckedUpdateWithoutCategoriesInput = {
   hourlyRate?: Prisma.FloatFieldUpdateOperationsInput | number
   experienceYears?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availabilities?: Prisma.TutorAvailabilityUncheckedUpdateManyWithoutTutorProfileNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTutorProfileNestedInput
 }
 
 
@@ -648,11 +860,13 @@ export type TutorProfileUncheckedUpdateWithoutCategoriesInput = {
 export type TutorProfileCountOutputType = {
   categories: number
   availabilities: number
+  bookings: number
 }
 
 export type TutorProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   categories?: boolean | TutorProfileCountOutputTypeCountCategoriesArgs
   availabilities?: boolean | TutorProfileCountOutputTypeCountAvailabilitiesArgs
+  bookings?: boolean | TutorProfileCountOutputTypeCountBookingsArgs
 }
 
 /**
@@ -679,6 +893,13 @@ export type TutorProfileCountOutputTypeCountAvailabilitiesArgs<ExtArgs extends r
   where?: Prisma.TutorAvailabilityWhereInput
 }
 
+/**
+ * TutorProfileCountOutputType without action
+ */
+export type TutorProfileCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookingWhereInput
+}
+
 
 export type TutorProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -687,11 +908,13 @@ export type TutorProfileSelect<ExtArgs extends runtime.Types.Extensions.Internal
   hourlyRate?: boolean
   experienceYears?: boolean
   rating?: boolean
-  isVerified?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   categories?: boolean | Prisma.TutorProfile$categoriesArgs<ExtArgs>
   availabilities?: boolean | Prisma.TutorProfile$availabilitiesArgs<ExtArgs>
+  bookings?: boolean | Prisma.TutorProfile$bookingsArgs<ExtArgs>
   _count?: boolean | Prisma.TutorProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tutorProfile"]>
 
@@ -702,9 +925,10 @@ export type TutorProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   hourlyRate?: boolean
   experienceYears?: boolean
   rating?: boolean
-  isVerified?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tutorProfile"]>
 
 export type TutorProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -714,9 +938,10 @@ export type TutorProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   hourlyRate?: boolean
   experienceYears?: boolean
   rating?: boolean
-  isVerified?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tutorProfile"]>
 
 export type TutorProfileSelectScalar = {
@@ -726,25 +951,33 @@ export type TutorProfileSelectScalar = {
   hourlyRate?: boolean
   experienceYears?: boolean
   rating?: boolean
-  isVerified?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TutorProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "bio" | "hourlyRate" | "experienceYears" | "rating" | "isVerified" | "createdAt" | "updatedAt", ExtArgs["result"]["tutorProfile"]>
+export type TutorProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "bio" | "hourlyRate" | "experienceYears" | "rating" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["tutorProfile"]>
 export type TutorProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   categories?: boolean | Prisma.TutorProfile$categoriesArgs<ExtArgs>
   availabilities?: boolean | Prisma.TutorProfile$availabilitiesArgs<ExtArgs>
+  bookings?: boolean | Prisma.TutorProfile$bookingsArgs<ExtArgs>
   _count?: boolean | Prisma.TutorProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type TutorProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type TutorProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type TutorProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type TutorProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $TutorProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TutorProfile"
   objects: {
+    user: Prisma.$UserPayload<ExtArgs>
     categories: Prisma.$TutorCategoryPayload<ExtArgs>[]
     availabilities: Prisma.$TutorAvailabilityPayload<ExtArgs>[]
+    bookings: Prisma.$BookingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -753,7 +986,7 @@ export type $TutorProfilePayload<ExtArgs extends runtime.Types.Extensions.Intern
     hourlyRate: number
     experienceYears: number
     rating: number | null
-    isVerified: boolean
+    userId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["tutorProfile"]>
@@ -1150,8 +1383,10 @@ readonly fields: TutorProfileFieldRefs;
  */
 export interface Prisma__TutorProfileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   categories<T extends Prisma.TutorProfile$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TutorProfile$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TutorCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   availabilities<T extends Prisma.TutorProfile$availabilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TutorProfile$availabilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TutorAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookings<T extends Prisma.TutorProfile$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TutorProfile$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1187,7 +1422,7 @@ export interface TutorProfileFieldRefs {
   readonly hourlyRate: Prisma.FieldRef<"TutorProfile", 'Float'>
   readonly experienceYears: Prisma.FieldRef<"TutorProfile", 'Int'>
   readonly rating: Prisma.FieldRef<"TutorProfile", 'Float'>
-  readonly isVerified: Prisma.FieldRef<"TutorProfile", 'Boolean'>
+  readonly userId: Prisma.FieldRef<"TutorProfile", 'String'>
   readonly createdAt: Prisma.FieldRef<"TutorProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TutorProfile", 'DateTime'>
 }
@@ -1439,6 +1674,10 @@ export type TutorProfileCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.TutorProfileCreateManyInput | Prisma.TutorProfileCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TutorProfileIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1509,6 +1748,10 @@ export type TutorProfileUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many TutorProfiles to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TutorProfileIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1623,6 +1866,30 @@ export type TutorProfile$availabilitiesArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.TutorAvailabilityScalarFieldEnum | Prisma.TutorAvailabilityScalarFieldEnum[]
+}
+
+/**
+ * TutorProfile.bookings
+ */
+export type TutorProfile$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Booking
+   */
+  select?: Prisma.BookingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Booking
+   */
+  omit?: Prisma.BookingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingInclude<ExtArgs> | null
+  where?: Prisma.BookingWhereInput
+  orderBy?: Prisma.BookingOrderByWithRelationInput | Prisma.BookingOrderByWithRelationInput[]
+  cursor?: Prisma.BookingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
 }
 
 /**

@@ -1,5 +1,7 @@
 import express from 'express';
 import { TutorController } from './tutor.controller';
+import { authMiddleware } from '../../middleware/auth';
+import { Role } from '../../types/role';
 
 
 const router = express.Router();
@@ -11,16 +13,21 @@ const router = express.Router();
 // router.get("/", TutorController.getTest);
 
 //create
-router.post("/", TutorController.createCategory);
+router.post("/", authMiddleware(Role.TUTOR), TutorController.createTutorProfile);
 
 
 router.get("/", TutorController.getYourProfile);
 
 
+router.get("/all", TutorController.getAllTutors);
+
 router.get("/:id", TutorController.getProfileById);
 
 
-router.put("/:id", TutorController.updateYourProfile);
+router.put("/pro", authMiddleware(Role.TUTOR), TutorController.updateYourProfile);
+
+router.post("/upgrade", authMiddleware(), TutorController.upgradeToTutor);
+
 
 
 export const TutorRouter = router;

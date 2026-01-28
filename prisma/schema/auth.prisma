@@ -1,16 +1,42 @@
+// model User {
+//     id            String    @id
+//     name          String
+//     email         String
+//     emailVerified Boolean   @default(false)
+//     image         String?
+//     createdAt     DateTime  @default(now())
+//     updatedAt     DateTime  @updatedAt
+//     role          String?   @default("STUDENT")
+//     phone         String?
+//     status        String?   @default("ACTIVE")
+//     sessions      Session[]
+//     accounts      Account[]
+
+//     // Opposite sides of Booking relations
+//     studentBookings Booking[] @relation("StudentBookings")
+//     tutorBookings   Booking[] @relation("TutorBookings")
+
+//     @@unique([email])
+//     @@map("user")
+// }
+
 model User {
-    id            String    @id
+    id            String   @id
     name          String
     email         String
-    emailVerified Boolean   @default(false)
+    emailVerified Boolean  @default(false)
     image         String?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    role          String?   @default("STUDENT")
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    role          String?  @default("STUDENT")
     phone         String?
-    status        String?   @default("ACTIVE")
-    sessions      Session[]
-    accounts      Account[]
+    status        String?  @default("ACTIVE")
+
+    sessions Session[]
+    accounts Account[]
+
+    studentBookings Booking[]     @relation("StudentBookings")
+    tutorProfile    TutorProfile?
 
     @@unique([email])
     @@map("user")

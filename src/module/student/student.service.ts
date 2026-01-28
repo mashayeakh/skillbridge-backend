@@ -17,6 +17,15 @@ type BookingPayload = {
     price: number,
     bookingStatus: BookingStatus
 }
+
+
+type ReviewPayload = {
+    bookingId: string;
+    rating: number;
+    comment?: string;
+};
+
+
 export const StudentService = {
 
 
@@ -71,6 +80,82 @@ export const StudentService = {
 
         return booking;
     },
+
+    // leave a review
+    async leaveReview(studentId: string, payload: ReviewPayload) {
+        //TODO1 validate fields
+
+        const { bookingId, rating, comment } = payload
+        if (!bookingId || !rating) throw new AppError(400, " Missing required fields");
+
+        if (rating < 1 || rating > 5) throw new AppError(400, "Rating must be between 1 and 5");
+
+
+        //TODO2 check booking exists and is completed
+        const booking = await prisma.booking.findUnique({
+            where: {
+                id: bookingId
+            }, include: {
+                review: true,
+                tutorProfile: true,
+            }
+        })
+
+        console.log("*******Booking ", booking)
+
+        if (!booking) throw new AppError(404, "Booking not found");
+
+        if (booking.status !== BookingStatus.CONFIRMED && booking.status !== BookingStatus.COMPLETED) throw new AppError(400, "You can only review completed sessions");
+
+
+        //TODO3 only student can leave a review
+
+        if (booking.studentId !== studentId) throw new AppError(403, "You are not allowed to review this booking");
+
+        //TODO4 prevent duplicate review
+
+
+        if (booking.review) throw new AppError(409, "You have already reviewed this booking");
+
+        //TODO5 create
+        const studReview = await prisma.review.create({
+            data: {
+                bookingId,
+                rating,
+                comment
+            }
+        });
+
+        //TODO need to make an update to tutor profile to reflect new rating as well
+        const tutorId = booking.tutorProfileId;
+
+        const reviews = await prisma.review.findMany({
+            where: {
+                booking: {
+                    tutorProfileId: tutorId
+                }
+            }
+        })
+
+        //avg rating
+        const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+
+
+        //TODO update tutor profile as well with new avg rating
+        await prisma.tutorProfile.update({
+            where: { id: tutorId },
+            data: { rating: avgRating }
+        });
+
+        console.log("***********Review ", studReview)
+        return studReview
+    },
+
+
+
+
+
+
 
     //! manage student profile
 
@@ -169,7 +254,8 @@ export const StudentService = {
         return deletedStudent;
     }
 
-    //change password
+    //change password - done by better auth itselr
+
 
 
 }

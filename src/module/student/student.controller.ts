@@ -26,6 +26,28 @@ export const StudentController = {
         }
     ),
 
+    leaveReview: asyncHandler(
+        async (req: Request, res: Response) => {
+            const studentId = req.user?.id;
+            if (!studentId) throw new Error("Unauthorized");
+
+            const { bookingId, rating, comment } = req.body;
+
+            const data = {
+                bookingId,
+                rating,
+                comment
+            }
+
+            const review = await StudentService.leaveReview(studentId, data);
+            res.status(201).json({
+                success: true,
+                message: "Review submitted successfully",
+                data: review
+            });
+        }
+    ),
+
     viewOwnProfile: asyncHandler(
         async (req: Request, res: Response) => {
             const studenId = req.user?.id;
@@ -79,4 +101,6 @@ export const StudentController = {
             })
         }
     ),
+
+
 }

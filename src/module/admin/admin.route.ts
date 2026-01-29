@@ -17,6 +17,21 @@ router.post(
     AdminController.createCategory
 );
 
+//ban
+router.patch(
+    "/users/:userId/ban",
+    authMiddleware(Role.ADMIN),
+    AdminController.banUser
+);
+
+//unban
+router.patch(
+    "/users/:userId/unban",
+    authMiddleware(Role.ADMIN),
+    AdminController.unbanUser
+);
+
+
 router.get(
     "/categories",
     authMiddleware(Role.ADMIN),

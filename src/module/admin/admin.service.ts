@@ -1,6 +1,7 @@
 import { AppError } from "../../error/appErrors";
 import { prisma } from "../../lib/prisma";
 import { CategoryCreatePayload, CategoryUpdatePayload } from "../../types/category";
+import { Role } from "../../types/role";
 
 
 // type CategoryCreatePayload = {
@@ -31,6 +32,50 @@ export const AdminService = {
 
         return users;
     },
+
+
+    //!ban / unban user
+    async updateUserStatus(adminId: string, targetUserId: string, status: "ACTIVE" | "BANNED") {
+
+        //check target user
+        const user = await prisma.user.findUnique({
+            where: {
+                id: targetUserId
+            }
+        })
+        console.log("**** Target user ", user);
+
+        if (!user) throw new AppError(404, "User not found");
+
+
+        //prevent self ban
+        if (adminId === targetUserId) throw new AppError(400, "You cannot change your own status");
+
+        //prevent banning another admin
+        if (user.role === Role.ADMIN) throw new AppError(403, "You cannot ban another admin");
+
+        //prevent redundant action
+        if (user.status === status) throw new AppError(400, `User is already ${status.toLowerCase()}`);
+
+        //just update the status
+        const result = await prisma.user.update({
+            where: {
+                id: targetUserId
+            },
+            data: {
+                status
+            }
+        })
+
+        return result;
+
+
+
+    },
+
+
+
+
 
     //!manage categories
     //create categorye
@@ -179,6 +224,7 @@ export const AdminService = {
             where: { id: categoryId },
         });
     },
+
 
 
 };

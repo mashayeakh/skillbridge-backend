@@ -46,7 +46,8 @@
 
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    // "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "strict": true,
     // "skipLibCheck": false,
@@ -59,5 +60,4 @@
     "resolveJsonModule": true
   },
   // "include": ["src", "generated"]
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "generated/prisma"]}
+"include": ["src/**/*", "prisma/generated/**/*"],  "exclude": ["node_modules", "dist", "generated/prisma"]}

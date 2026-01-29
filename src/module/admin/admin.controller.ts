@@ -1,8 +1,7 @@
+import { accountStatus } from "../../types/accStatus";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { CategoriesService } from "../categories/categories.service";
 import { AdminService } from "./admin.service";
-import { Request } from 'express';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 export const AdminController = {
     viewAllUsers: asyncHandler(async (req: Request, res: Response) => {
@@ -25,6 +24,51 @@ export const AdminController = {
             });
         }
     ),
+
+    //ban user
+    banUser: asyncHandler(
+        async (req: Request, res: Response) => {
+            console.log("***🔥 Admin hit")
+            const adminId = req?.user?.id;
+            console.log("Admin id", adminId);
+
+            const { userId } = req.params;
+            console.log("User id", userId);
+
+            const result = await AdminService.updateUserStatus(
+                adminId as string,
+                userId as string,
+                accountStatus.BANNED
+            )
+
+            res.status(200).json({
+                success: true,
+                message: "User banned successfully",
+                data: result,
+            })
+        }
+    ),
+
+    unbanUser: asyncHandler(
+        async (req: Request, res: Response) => {
+            const adminId = req.user?.id;
+            const { userId } = req.params;
+
+            const result = await AdminService.updateUserStatus(
+                adminId as string,
+                userId as string,
+                accountStatus.ACTIVE
+            )
+
+            res.status(200).json({
+                success: true,
+                message: "User unbanned successfully",
+                data: result,
+            });
+        }
+    ),
+
+
 
     //see all categories
     getAllCategories: asyncHandler(

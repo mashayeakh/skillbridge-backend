@@ -2,6 +2,8 @@ import { betterAuth, email } from "better-auth";
 import { NextFunction, Request, Response } from "express";
 import { auth } from './../lib/auth';
 import { Role } from "../types/role";
+import { accountStatus } from "../types/accStatus";
+import { prisma } from "../lib/prisma";
 
 export const authMiddleware = (...roles: Role[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +39,25 @@ export const authMiddleware = (...roles: Role[]) => {
                 emailVerified: session.user.emailVerified,
                 role: session.user.role as Role
             };
+
+
+            const user = await prisma.user.findUnique({
+                where: { id: req.user.id }
+            });
+
+
+            //unbanned user cant access private routes
+            // if (session.user.status === accountStatus.BANNED) {
+            //     return res.status(403).json({
+            //         message: "Your account has been banned. Contact support.",
+            //     });
+            // }
+
+            if (!user || user.status === "BANNED") {
+                return res.status(403).json({
+                    message: "Your account has been banned"
+                });
+            }
 
             next();
         } catch (error) {

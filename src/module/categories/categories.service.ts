@@ -7,15 +7,15 @@ export const CategoriesService = {
         return "Categories Service is working!!"
     },
 
-    async createCategory(payload: CategoryCreatePayload) {
-        // console.log("**Payload", payload);
-        const result = await prisma.category.create({ data: payload });
+    // async createCategory(payload: CategoryCreatePayload) {
+    //     // console.log("**Payload", payload);
+    //     const result = await prisma.category.create({ data: payload });
 
-        // console.log("**Result ", result)
-        return result;
-    },
+    //     // console.log("**Result ", result)
+    //     return result;
+    // },
 
-    async getAllCategories() {
-        return await prisma.category.findMany();
-    },
+    // async getAllCategories() {
+    //     return await prisma.category.findMany();
+    // },
 }

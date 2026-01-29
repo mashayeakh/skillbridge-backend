@@ -8,4 +8,11 @@ type CategoryTypes = {
 //omit the category
 type CategoryCreatePayload = Omit<CategoryTypes, "categoryId">;
 
-export { CategoryTypes, CategoryCreatePayload }
+
+type CategoryUpdatePayload = {
+    name?: string;
+    description?: string;
+};
+
+
+export { CategoryTypes, CategoryCreatePayload, CategoryUpdatePayload }

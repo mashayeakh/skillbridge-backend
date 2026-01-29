@@ -8,10 +8,10 @@ const router = express.Router();
 // router.get("/", CategoriesController.getTest);
 
 //get all
-router.get("/", CategoriesController.getAllCategories);
+// router.get("/", CategoriesController.getAllCategories);
 
 //create
-router.post("/", CategoriesController.createCategory);
+// router.post("/", CategoriesController.createCategory);
 
 
 

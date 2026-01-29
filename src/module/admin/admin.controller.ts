@@ -68,6 +68,16 @@ export const AdminController = {
         }
     ),
 
+    //view all bookings
+    getAllBookings: asyncHandler(async (_req: Request, res: Response) => {
+        const bookings = await AdminService.getAllBookings();
+
+        res.status(200).json({
+            success: true,
+            message: "All bookings retrieved successfully",
+            data: bookings,
+        });
+    }),
 
 
     //see all categories

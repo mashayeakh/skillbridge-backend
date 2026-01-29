@@ -31,6 +31,13 @@ router.patch(
     AdminController.unbanUser
 );
 
+//view all bookings
+router.get(
+    "/bookings",
+    authMiddleware(Role.ADMIN),
+    AdminController.getAllBookings
+);
+
 
 router.get(
     "/categories",

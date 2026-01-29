@@ -68,11 +68,41 @@ export const AdminService = {
         })
 
         return result;
-
-
-
     },
 
+
+    //all bookings
+    async getAllBookings() {
+        return prisma.booking.findMany({
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                student: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        role: true,
+                        status: true,
+                    },
+                },
+                tutorProfile: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                email: true,
+                                status: true,
+                            },
+                        },
+                    },
+                },
+                review: true,
+            },
+        });
+    },
 
 
 

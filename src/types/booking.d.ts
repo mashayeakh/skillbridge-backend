@@ -1,6 +1,6 @@
 export type BookingInput = {
     studentId: string,
-    tutorId: string,
+    tutorProfileId: string,
     startTime: Date,
     endTime: Date,
     status: BookingStatus,

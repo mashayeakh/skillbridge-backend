@@ -18,6 +18,8 @@ router.post("/", authMiddleware(Role.TUTOR), TutorController.createTutorProfile)
 
 router.get("/me", authMiddleware(Role.TUTOR), TutorController.getYourProfile);
 
+//top tutors
+router.get("/top-tutors", TutorController.viewTopTutors);
 
 router.get("/all", TutorController.getAllTutors);
 
@@ -27,6 +29,7 @@ router.get("/:id", TutorController.getProfileById);
 router.put("/pro", authMiddleware(Role.TUTOR), TutorController.updateYourProfile);
 
 router.post("/upgrade", authMiddleware(), TutorController.upgradeToTutor);
+
 
 
 

@@ -13,17 +13,16 @@ export const app = express();
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 
-
-
 // Middleware
 app.use(express.json());
 
 //cors
-app.use(cors({
-    //set origin
-    origin: process.env.APP_URL || "http://localhost:4000",// client side url
-    credentials: true,
-}))
+app.use(
+    cors({
+        origin: process.env.CLIENT_URL,
+        credentials: true,
+    })
+)
 
 // Root route
 app.get("/", (req, res) => {

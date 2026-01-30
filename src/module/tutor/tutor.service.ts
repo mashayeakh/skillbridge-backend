@@ -194,5 +194,24 @@ export const TutorService = {
         console.log("RESUKKKKK", result)
         return result;
 
+    },
+
+    //top tutors 
+    async getTopTutors() {
+        const result = await prisma.tutorProfile.findMany({
+            where: {
+                rating: { not: null },
+                experienceYears: { gte: 1 },
+
+                categories: { some: {} },
+            },
+            orderBy: [
+                { rating: "desc" },
+                { experienceYears: "desc" },
+                { updatedAt: "desc" },
+            ],
+            take: 5
+        })
+        console.log("****RESULT ", result)
     }
 }

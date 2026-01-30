@@ -6,6 +6,7 @@ import { TutorAvailabilityRouter } from './../module/tutoravailability/availabil
 import { BookingRouter } from './../module/bookings/bookings.route';
 import { StudentRouter } from "../module/student/student.route";
 import { AdminRouter } from "../module/admin/admin.route";
+import { PublicRouter } from "../module/public/public.route";
 
 const route = Router();
 
@@ -30,6 +31,8 @@ route.use("/student", StudentRouter);
 //admin
 route.use("/admin", AdminRouter);
 
+//public 
+route.use("/public", PublicRouter);
 
 
 export default route;

@@ -152,5 +152,19 @@ export const TutorController = {
             }
             )
         }
+    ),
+
+    viewTopTutors: asyncHandler(
+        async (req: Request, res: Response) => {
+            const result = await TutorService.getTopTutors();
+            console.log("RE", result)
+            res.status(200).json({
+                success: true,
+                message: "Top tutors retrieved",
+                data: await TutorService.getTopTutors()
+            }
+            )
+        }
     )
+
 }

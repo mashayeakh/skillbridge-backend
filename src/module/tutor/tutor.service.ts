@@ -42,7 +42,13 @@ export const TutorService = {
         const result = await prisma.tutorProfile.findUnique({
             where: {
                 id: id
-            },
+            }, include: {
+                categories: {
+                    include: {
+                        category: true
+                    }
+                }
+            }
         })
         return result;
     },
@@ -201,17 +207,25 @@ export const TutorService = {
         const result = await prisma.tutorProfile.findMany({
             where: {
                 rating: { not: null },
-                experienceYears: { gte: 1 },
-
-                categories: { some: {} },
+                experienceYears: { gte: 0 },
             },
             orderBy: [
                 { rating: "desc" },
                 { experienceYears: "desc" },
                 { updatedAt: "desc" },
             ],
-            take: 5
-        })
-        console.log("****RESULT ", result)
+            take: 5,
+            include: {
+                categories: {
+                    include: {
+                        category: true,
+                    },
+                },
+                // user: true, 
+            },
+        });
+
+        return result;
     }
+
 }

@@ -144,6 +144,217 @@ export const StudentDashboardService = {
                 review: true,
             },
         });
+    },
+
+    //pending reviews
+    async getPendingReviews(studentId: string) {
+        return prisma.booking.findMany({
+            where: {
+                studentId,
+                status: "COMPLETED",
+                review: null,
+            },
+            include: {
+                tutorProfile: {
+                    select: {
+                        categories: true,
+                        user: { select: { name: true } },
+                    },
+                },
+            },
+        });
+    },
+
+    //learning progress
+    async getLearningProgress(studentId: string) {
+        const bookings = await prisma.booking.findMany({
+            where: {
+                studentId,
+                status: "COMPLETED",
+            },
+            include: {
+                tutorProfile: {
+                    select: {
+                        categories: true,
+                    },
+                },
+            },
+        });
+
+        const bySubjectMap: Record<string, any> = {};
+
+        bookings.forEach(b => {
+            const hours =
+                (b.endTime.getTime() - b.startTime.getTime()) / 36e5;
+
+            b.tutorProfile.categories.forEach(category => {
+                const subject = category.id;
+
+                if (!bySubjectMap[subject]) {
+                    bySubjectMap[subject] = {
+                        subject: subject,
+                        hours: 0,
+                        sessions: 0,
+                        proficiency: 0,
+                        lastSession: b.endTime,
+                    };
+                }
+
+                bySubjectMap[subject].hours += hours;
+                bySubjectMap[subject].sessions += 1;
+                bySubjectMap[subject].lastSession = b.endTime;
+            });
+        });
+
+        const bySubject = Object.values(bySubjectMap).map(s => ({
+            ...s,
+            proficiency: Math.min(100, s.sessions * 10),
+        }));
+
+        return { bySubject };
+    },
+
+    //financial summay
+    async getFinancialSummary(studentId: string) {
+        const bookings = await prisma.booking.findMany({
+            where: {
+                studentId,
+                status: "COMPLETED",
+            },
+        });
+
+        const totalSpent = bookings.reduce((sum, b) => sum + b.price, 0);
+        const averageSessionCost =
+            bookings.length ? totalSpent / bookings.length : 0;
+
+        return {
+            totalSpent,
+            averageSessionCost,
+            paymentHistory: bookings.map(b => ({
+                date: b.createdAt,
+                amount: b.price,
+                bookingId: b.id,
+                method: "COD",
+            })),
+        };
+    },
+
+    //Booking Statistics
+    async getBookingStats(studentId: string) {
+        const bookings = await prisma.booking.findMany({
+            where: { studentId },
+        });
+
+        const byStatus: any = {};
+        const byDay: any = {};
+        const byHour: any = {};
+        let cancelled = 0;
+
+        bookings.forEach(b => {
+            byStatus[b.status] = (byStatus[b.status] || 0) + 1;
+
+            const day = b.startTime.toLocaleDateString("en-US", { weekday: "short" });
+            byDay[day] = (byDay[day] || 0) + 1;
+
+            const hour = b.startTime.getHours();
+            byHour[hour] = (byHour[hour] || 0) + 1;
+
+            if (b.status === "CANCELLED") cancelled++;
+        });
+
+        return {
+            byStatus: Object.entries(byStatus).map(([status, count]) => ({ status, count })),
+            byDayOfWeek: Object.entries(byDay).map(([day, count]) => ({ day, count })),
+            byTimeOfDay: Object.entries(byHour).map(([hour, count]) => ({
+                hour: Number(hour),
+                count,
+            })),
+            cancellationRate: bookings.length
+                ? cancelled / bookings.length
+                : 0,
+        };
+    },
+
+    // quick actions
+    async getQuickActions(studentId: string) {
+        const [pendingReviews, upcomingToday] = await Promise.all([
+            prisma.booking.count({
+                where: { studentId, status: "COMPLETED", review: null },
+            }),
+            prisma.booking.count({
+                where: {
+                    studentId,
+                    startTime: {
+                        gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                        lte: new Date(new Date().setHours(23, 59, 59, 999)),
+                    },
+                },
+            }),
+        ]);
+
+        return {
+            pendingConfirmations: 0,
+            pendingReviews,
+            upcomingSessionsToday: upcomingToday,
+            outstandingPayments: 0,
+            unreadNotifications: 0,
+        };
+    },
+
+
+    //Search & Filter Bookings
+    async searchBookings(studentId: string, filters: any) {
+        return prisma.booking.findMany({
+            where: {
+                studentId,
+                status: filters.status,
+                tutorProfileId: filters.tutorId,
+                createdAt: {
+                    gte: filters.dateFrom && new Date(filters.dateFrom),
+                    lte: filters.dateTo && new Date(filters.dateTo),
+                },
+            },
+            include: {
+                tutorProfile: {
+                    select: {
+                        categories: true,
+                        user: { select: { name: true } },
+                    },
+                },
+            },
+        });
+    },
+
+    // export bookings
+    async getBookingsForExport(
+        studentId: string,
+        filters: { dateFrom?: string; dateTo?: string }
+    ) {
+        return prisma.booking.findMany({
+            where: {
+                studentId,
+                createdAt: {
+                    gte: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
+                    lte: filters.dateTo ? new Date(filters.dateTo) : undefined,
+                },
+            },
+            include: {
+                tutorProfile: {
+                    select: {
+                        categories: true,
+                        user: { select: { name: true } },
+                    },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+        });
     }
+
+
+
+
+
+
+
 
 }

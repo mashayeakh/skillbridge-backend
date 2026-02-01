@@ -7,6 +7,7 @@ import { BookingRouter } from './../module/bookings/bookings.route';
 import { StudentRouter } from "../module/student/student.route";
 import { AdminRouter } from "../module/admin/admin.route";
 import { PublicRouter } from "../module/public/public.route";
+import { StudentDashboardRouter } from "../module/student/dashboard/dashboard.route";
 
 const route = Router();
 
@@ -33,6 +34,10 @@ route.use("/admin", AdminRouter);
 
 //public 
 route.use("/public", PublicRouter);
+
+
+//student dashboard - 
+route.use("/student/dashboard", StudentDashboardRouter);
 
 
 export default route;

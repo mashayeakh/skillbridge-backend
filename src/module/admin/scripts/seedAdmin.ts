@@ -1,64 +1,62 @@
-import { AppError } from "../../../error/appErrors";
+import "dotenv/config";
 import { prisma } from "../../../lib/prisma";
-import { Role } from "../../../types/role";
+import { auth } from "../../../lib/auth";
 
-async function seedAdmin() {
 
-    try {
-        //create an admin user with predefined credentials
-        const adminUser = {
-            name: "Elon Musk",
-            email: "elonmusk@tesla.com",
-            password: "elonmusk123",
-            role: Role.ADMIN,
-            emailVerified: true,
-        }
+async function main() {
+    process.env.NODE_ENV = "seeding";
+    console.log("***  Seeding Admin User...  ***");
 
-        //check if admin user already exists or not
-        const existingAdmin = await prisma.user.findUnique({
-            where: {
-                email: adminUser.email
-            }
-        })
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@admin.com";
+    const adminPassword = process.env.ADMIN_PASS || "admin123";
+    const adminName = process.env.ADMIN_NAME || "System Admin";
 
-        if (existingAdmin) throw new AppError(400, "Admin user already exists");
 
-        console.log("***** admin about to be seeding now")
-        //we will go with using api (http://localhost:5000/api/auth/sign-up/email) from better auth
-        const url = "http://localhost:3000/api/auth/sign-up/email"
-        console.log("*** URL hit ", url)
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Origin": "http://localhost:3000"
-            },
-            body: JSON.stringify(adminUser)
-        });
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+        where: { email: adminEmail },
+    });
 
-        const responseBody = await response.json();
-        console.log("Response Body:", responseBody);
-
-        if (response.ok) {
-            console.log("Admin user seeded successfully");
-            //update the email Verification.
-            const updateUser = await prisma.user.update({
-                where: {
-                    email: adminUser.email,
+    if (!existingUser) {
+        console.log(`*** Creating new admin user: ${adminEmail} ***`);
+        try {
+            await auth.api.signUpEmail({
+                body: {
+                    email: adminEmail,
+                    password: adminPassword,
+                    name: adminName,
                 },
-                //update the data (email verification = true)
-                data: {
-                    emailVerified: true,
-                }
             });
-            console.log("*******Email verified as well. ", updateUser);
-        } else {
-            console.log("*******Failed to seed admin user");
+            console.log("*** User created sucessfully ***.");
+        } catch (error: any) {
+            console.error("***Error creating admin account: ", error.message, "***");
         }
-    } catch (error: any) {
-        console.error("******* Error seeding admin user:", error.message);
+    } else {
+        console.log(
+            `*** User ${adminEmail} already exists. Updating to ADMIN role...`,
+        );
     }
 
+    //! ensure user has admin role and is verified in the database
+    await prisma.user.update({
+        where: { email: adminEmail },
+        data: {
+            role: "ADMIN",
+            // isActive: true,
+            status: "ACTIVE",
+            emailVerified: true,
+            name: adminName,
+        },
+    });
+
+    console.log(`*** User ${adminEmail} is now an ADMIN ***`);
 }
 
-seedAdmin()
+main()
+    .catch((e) => {
+        console.error("*** Error seeding admin user ***", e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

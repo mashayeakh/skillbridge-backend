@@ -7,6 +7,8 @@ import { prisma } from '../../lib/prisma';
 
 export const TutorAvailabilityController = {
 
+
+    //!create avalability slots
     createSlots: asyncHandler(async (req: Request, res: Response) => {
         console.log("🔥 Availability Controller Hit");
 
@@ -39,7 +41,7 @@ export const TutorAvailabilityController = {
         });
     }),
 
-    //get tutor availability
+    //!get tutor available slots
     getAvailableSlots: asyncHandler(
         async (req: Request, res: Response) => {
             const slots = await TutorAvailabilitySevice.getAvailableSlots(req.params.tutorProfileId as string);
@@ -49,6 +51,28 @@ export const TutorAvailabilityController = {
                 data: slots
             })
         }
-    )
-}
+    ),
 
+    //update availability
+    updateAvailability: asyncHandler(async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { isBooked } = req.body;
+
+        if (typeof isBooked !== "boolean") {
+            throw new AppError(400, "isBooked must be boolean");
+        }
+
+        const updatedSlot =
+            await TutorAvailabilitySevice.updateAvailabilitySlot(
+                id as string,
+                isBooked,
+                req.user!.id
+            );
+
+        res.status(200).json({
+            success: true,
+            message: "Availability slot updated successfully",
+            data: updatedSlot,
+        });
+    }),
+}

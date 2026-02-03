@@ -13,9 +13,17 @@ router.get(
 
 router.post(
     "/categories",
-    authMiddleware(Role.ADMIN),
+    authMiddleware(Role.TUTOR),
     AdminController.createCategory
 );
+
+// backend: assign category to tutor
+// router.post(
+//     "/tutor/category",
+//     authMiddleware(Role.TUTOR),
+//     AdminController.createCategory
+// );
+
 
 //ban
 router.patch(
@@ -39,17 +47,25 @@ router.get(
 );
 
 
-router.get(
-    "/categories",
-    authMiddleware(Role.ADMIN),
-    AdminController.getAllCategories
-);
+// router.get(
+//     "/categories",
+//     AdminController.getAllCategories
+// );
+
 
 router.patch(
     "/categories/:id",
     authMiddleware(Role.ADMIN),
     AdminController.updateCategory
 );
+
+//update status
+router.patch(
+    "/users/:id",
+    authMiddleware(Role.ADMIN),
+    AdminController.updateUserStatus
+);
+
 
 router.patch(
     "/categories/:id/deactivate",
@@ -64,6 +80,13 @@ router.delete(
 );
 
 
+//!user managerment routes
+// router.get("/:id", authMiddleware(Role.ADMIN), AdminController.getUser);
+router.get("/student/:userId", authMiddleware(Role.ADMIN), AdminController.getStudent);
+router.get("/tutor/:userId", authMiddleware(Role.ADMIN), AdminController.getTutor);
+// router.patch("/:id", authMiddleware(Role.ADMIN), AdminController.updateUser);
+// router.patch("/:id/role", authMiddleware(Role.ADMIN), AdminController.changeUserRole);
+// router.delete("/:id", authMiddleware(Role.ADMIN), AdminController.deleteUser);
 
 
 export const AdminRouter = router;

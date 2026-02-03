@@ -4,12 +4,6 @@ import { CategoryCreatePayload, CategoryUpdatePayload } from "../../types/catego
 import { Role } from "../../types/role";
 
 
-// type CategoryCreatePayload = {
-//   name: string;
-//   description?: string;
-// };
-
-
 export const AdminService = {
     async getAllUsers() {
         // fetch all users and include their tutor profile if they have one
@@ -33,6 +27,24 @@ export const AdminService = {
         return users;
     },
 
+
+    //updarte status
+    async updateUser_Status(userId: string, status: string) {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        console.log("user", user)
+
+        if (!user) {
+            throw new AppError(404, "User not found");
+        }
+
+        return prisma.user.update({
+            where: { id: userId },
+            data: { status },
+        });
+    },
 
     //!ban / unban user
     async updateUserStatus(adminId: string, targetUserId: string, status: "ACTIVE" | "BANNED") {
@@ -255,6 +267,75 @@ export const AdminService = {
         });
     },
 
+    //!-------------Users Management
+
+    // 1. Get all users                - DONE
+    // async getAllUsers() {
+    //     return prisma.user.findMany({
+    //         include: {
+    //             studentBookings: true,
+    //             tutorProfile: true,
+    //         },
+    //     });
+    // },
+
+    // 2. Get single user with bookings
+    async getStudentDetails(userId: string) {
+        return prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                studentBookings: {
+                    include: {
+                        tutorProfile: {
+                            include: {
+                                categories: true,
+                                availabilities: true,
+                            },
+                        },
+                    },
+                },
+                tutorProfile: false, // not needed for student-only view
+            },
+        });
+    },
 
 
+    async getTutorDetails(userId: string) {
+        return prisma.tutorProfile.findUnique({
+            where: { id: userId },
+            include: {
+                bookings: {
+                    include: {
+                        student: true,
+                    },
+                },
+                categories: true,
+                availabilities: true,
+            },
+        });
+    },
+
+    // 3. Update user info
+    async updateUserInfo(userId: string, data: { name?: string; email?: string; phone?: string }) {
+        return prisma.user.update({
+            where: { id: userId },
+            data,
+        });
+    },
+
+    // 4. Change user role
+    async updateUserRole(userId: string, role: string) {
+        return prisma.user.update({
+            where: { id: userId },
+            data: { role },
+        });
+    },
+
+    // 5. Soft delete user
+    async softDeleteUser(userId: string) {
+        return prisma.user.update({
+            where: { id: userId },
+            data: { status: "INACTIVE" },
+        });
+    },
 };

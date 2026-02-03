@@ -1,3 +1,4 @@
+import { AppError } from "../../error/appErrors";
 import { accountStatus } from "../../types/accStatus";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { AdminService } from "./admin.service";
@@ -13,17 +14,24 @@ export const AdminController = {
         });
     }),
 
-    //create category
-    createCategory: asyncHandler(
-        async (req: Request, res: Response) => {
-            const payload = req.body;
-            res.status(201).json({
-                success: true,
-                message: "Category created successfully",
-                data: await AdminService.createCategory(payload),
-            });
+
+    //update status
+    updateUserStatus: asyncHandler(async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!status) {
+            throw new AppError(400, "Status is required");
         }
-    ),
+
+        const updatedUser = await AdminService.updateUser_Status(id as string, status);
+
+        res.status(200).json({
+            success: true,
+            message: "User status updated successfully",
+            data: updatedUser,
+        });
+    }),
 
     //ban user
     banUser: asyncHandler(
@@ -79,6 +87,17 @@ export const AdminController = {
         });
     }),
 
+    //create category
+    createCategory: asyncHandler(
+        async (req: Request, res: Response) => {
+            const payload = req.body;
+            res.status(201).json({
+                success: true,
+                message: "Category created successfully",
+                data: await AdminService.createCategory(payload),
+            });
+        }
+    ),
 
     //see all categories
     getAllCategories: asyncHandler(
@@ -143,5 +162,70 @@ export const AdminController = {
         }
     ),
 
+    //! user management
 
+    // 1. Get all users
+    getAllUsers: asyncHandler(async (req: Request, res: Response) => {
+        const users = await AdminService.getAllUsers();
+        res.status(200).json({ success: true, data: users });
+    }),
+
+    // 2. Get single user by ID
+    getStudent: asyncHandler(
+        async (req: Request, res: Response) => {
+            const { userId } = req.params;
+            const student = await AdminService.getStudentDetails(userId as string);
+
+            if (!student) return res.status(404).json({ message: "Student not found" });
+
+            res.status(200).json({
+                success: true,
+                message: "Student details retrieved successfully",
+                data: student
+            });
+        }
+    ),
+
+    getTutor: asyncHandler(
+        async (req: Request, res: Response) => {
+            const { userId } = req.params;
+            const tutor = await AdminService.getTutorDetails(userId as string);
+
+            if (!tutor) return res.status(404).json({ message: "Tutor not found" });
+
+            res.status(200).json({
+                success: true,
+                message: "tutor details retrieved successfully",
+                data: tutor
+            });
+        }
+    ),
+
+    // // 3. Update user info (name, email, phone)
+    // updateUser: asyncHandler(async (req: Request, res: Response) => {
+    //     const { id } = req.params;
+    //     const { name, email, phone } = req.body;
+    //     const updatedUser = await AdminService.updateUserInfo(id as string, { name, email, phone });
+    //     res.status(200).json({ success: true, data: updatedUser });
+    // }),
+
+    // // 4. Change user role
+    // changeUserRole: asyncHandler(async (req: Request, res: Response) => {
+    //     const { id } = req.params;
+    //     const { role } = req.body;
+    //     const updatedUser = await AdminService.updateUserRole(id as string, role);
+    //     res.status(200).json({ success: true, data: updatedUser });
+    // }),
+
+    // 5. Soft delete user (set status to INACTIVE)
+    deleteUser: asyncHandler(async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const deletedUser = await AdminService.softDeleteUser(id as string);
+        res.status(200).json({
+            success: true,
+            message: "User has been set to INACTIVE",
+            data: deletedUser,
+        });
+    }),
 };
+

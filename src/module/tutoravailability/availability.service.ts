@@ -50,6 +50,34 @@ export const TutorAvailabilitySevice = {
             },
             orderBy: { startTime: "asc" }
         });
-    }
+    },
 
+    //! update availability
+    async updateAvailabilitySlot(
+        slotId: string,
+        isBooked: boolean,
+        tutorUserId: string
+    ) {
+        // check slot exists and belongs to this tutor
+        const slot = await prisma.tutorAvailability.findFirst({
+            where: {
+                id: slotId,
+                tutorProfile: {
+                    userId: tutorUserId,
+                },
+            },
+        });
+
+        if (!slot) {
+            throw new AppError(
+                404,
+                "Availability slot not found or not authorized"
+            );
+        }
+
+        return prisma.tutorAvailability.update({
+            where: { id: slotId },
+            data: { isBooked },
+        });
+    },
 }

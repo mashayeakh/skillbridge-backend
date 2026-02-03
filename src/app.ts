@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
@@ -28,7 +29,7 @@ app.get("/api/auth/session", async (req, res) => {
         return res.status(200).json(session);
     } catch (err) {
         return res.status(500).json({ error: "Failed to get session" });
-    } 
+    }
 });
 
 

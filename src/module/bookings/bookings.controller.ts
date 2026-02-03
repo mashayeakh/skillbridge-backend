@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { BookingService, createBookingSchema } from './bookings.service';
 import { BookingStatus } from '../../../prisma/generated/prisma/enums';
 import { z } from "zod";
+import { AppError } from '../../error/appErrors';
 
 
 
@@ -28,6 +29,21 @@ export const BookingController = {
                 data: booking,
             });
         }),
+
+        //!Get std bookings
+    getMyBookings: asyncHandler(async (req: Request, res: Response) => {
+        if (!req.user?.id) {
+            throw new AppError(401, "Unauthorized");
+        }
+
+        const bookings = await BookingService.getStudentBookings(req.user.id);
+
+        res.status(200).json({
+            success: true,
+            message: "Student bookings retrieved successfully",
+            data: bookings,
+        });
+    }),
 
     //get all bookings
     getAllBookings: asyncHandler(

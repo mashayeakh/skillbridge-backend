@@ -64,5 +64,14 @@ export const PublicService = {
                 categories: { include: { category: true } }
             }
         });
-    }
+    },
+
+    //!get all categories
+    async getAllCategories(includeInactive = true) {
+        return await prisma.category.findMany({
+            where: includeInactive ? {} : { isActive: true },
+            orderBy: { createdAt: "desc" },
+        });
+    },
+
 };

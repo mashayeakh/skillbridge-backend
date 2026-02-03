@@ -2,6 +2,8 @@ import { asyncHandler } from './../../utils/asyncHandler';
 import { Request, Response } from "express";
 import { StudentService } from './student.service';
 import { success } from 'better-auth/*';
+import { BookingService } from '../bookings/bookings.service';
+import { AppError } from '../../error/appErrors';
 
 
 

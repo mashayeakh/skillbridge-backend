@@ -18,9 +18,9 @@ export const authMiddleware = (...roles: Role[]) => {
                 return res.status(401).json({ message: "Unauthorized!!!!!!" });
             }
 
-            if (session?.user.emailVerified === false) {
-                return res.status(401).json({ message: "Email not verified" });
-            }
+            // if (session?.user.emailVerified === false) {
+            //     return res.status(401).json({ message: "Email not verified" });
+            // }
 
             // // check role if roles were provided
             if (roles.length > 0 && !roles.includes(session.user.role as Role)) {

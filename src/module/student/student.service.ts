@@ -30,20 +30,20 @@ export const StudentService = {
 
 
     async studentBooking(payload: BookingPayload, studentId: string) {
-        const { tutorProfileId, startTime, endTime, bookingStatus, price } = payload;
+        const { tutorProfileId, bookingStatus, price } = payload;
 
         console.log("------ payload", payload)
 
-        if (!tutorProfileId || !startTime || !endTime || !bookingStatus || !price) {
+        if (!tutorProfileId || !bookingStatus || !price) {
             throw new AppError(400, "Missing required fields");
         }
 
-        const start = new Date(startTime);
-        const end = new Date(endTime);
+        // const start = new Date(startTime);
+        // const end = new Date(endTime);
 
-        if (start >= end) {
-            throw new AppError(406, "End time must be after start time");
-        }
+        // if (start >= end) {
+        //     throw new AppError(406, "End time must be after start time");
+        // }
 
         // Check if tutor exists
         const tutor = await prisma.tutorProfile.findUnique({
@@ -55,8 +55,8 @@ export const StudentService = {
         const overlappingBooking = await prisma.booking.findFirst({
             where: {
                 tutorProfileId: tutorProfileId,
-                startTime: { lt: end },
-                endTime: { gt: start }
+                // startTime: { lt: end },
+                // endTime: { gt: start }
             }
         });
 
@@ -69,8 +69,8 @@ export const StudentService = {
             data: {
                 studentId,
                 tutorProfileId: tutorProfileId,
-                startTime: start,
-                endTime: end,
+                // startTime: start,
+                // endTime: end,
                 status: bookingStatus,
                 price: price
             }

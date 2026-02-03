@@ -9,6 +9,7 @@ import { AdminRouter } from "../module/admin/admin.route";
 import { PublicRouter } from "../module/public/public.route";
 import { StudentDashboardRouter } from "../module/student/dashboard/dashboard.route";
 import { TutorDashboardRouter } from "../module/tutor/dashboard/dashboard.route";
+import { AdminDashboardRouter } from "../module/admin/dashboard/dashboard.route";
 
 const route = Router();
 
@@ -25,7 +26,7 @@ route.use("/tutor-category", TutorCategoryRouter);
 route.use("/tutor-availability", TutorAvailabilityRouter);
 
 //booking
-route.use("/booking", BookingRouter)
+route.use("/bookings", BookingRouter)
 
 //student
 route.use("/student", StudentRouter);
@@ -42,6 +43,8 @@ route.use("/student/dashboard", StudentDashboardRouter);
 // tutor dashboard -
 route.use("/tutor/dashboard", TutorDashboardRouter);
 
+//admin dashboard - 
+route.use("/admin/dashboard", AdminDashboardRouter);
 
 
 export default route;

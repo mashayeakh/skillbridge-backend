@@ -9,7 +9,9 @@ const router = express.Router();
 
 router.post("/booking", authMiddleware(Role.STUDENT), StudentController.studnentBooking);
 
-router.post("/session-review", authMiddleware(Role.STUDENT), StudentController.leaveReview);
+// router.post("/session-review", authMiddleware(Role.STUDENT), StudentController.leaveReview);
+
+router.post("/reviews", authMiddleware(Role.STUDENT), StudentController.leaveReview);
 
 router.get("/profile", authMiddleware(Role.STUDENT), StudentController.viewOwnProfile);
 

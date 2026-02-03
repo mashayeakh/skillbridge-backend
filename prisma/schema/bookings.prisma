@@ -27,8 +27,8 @@ model Booking {
     student      User         @relation("StudentBookings", fields: [studentId], references: [id])
     tutorProfile TutorProfile @relation(fields: [tutorProfileId], references: [id])
 
-    startTime DateTime
-    endTime   DateTime
+    startTime DateTime?
+    endTime   DateTime?
     status    BookingStatus
     price     Float
 

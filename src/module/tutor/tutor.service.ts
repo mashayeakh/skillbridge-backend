@@ -5,10 +5,6 @@ import { Role } from "../../types/role";
 
 
 export const TutorService = {
-    // async test() {
-    //     return "Tutor service is working"
-    // }
-
     async createTutorProfile(payload: TutorTypes) {
         console.log("--> payload from tutor profile", payload);
 

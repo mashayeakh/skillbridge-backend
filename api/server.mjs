@@ -262,15 +262,48 @@ var transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: process.env.Email_USER,
-    pass: process.env.Email_PASS
+    user: process.env.EMAIL_USER,
+    // Fixed typo: was Email_USER
+    pass: process.env.EMAIL_PASS
+    // Fixed typo: was Email_PASS
   }
 });
 var auth = betterAuth({
+  // Database adapter
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
-  trustedOrigins: [process.env.APP_URL],
+  // 🔥 CRITICAL: Add your frontend origin here
+  trustedOrigins: [
+    process.env.APP_URL,
+    "http://localhost:3000"
+    // Add your local development URL
+  ],
+  // 🔥 CRITICAL: Cookie configuration for cross-origin
+  cookie: {
+    name: "auth-session",
+    // Optional: custom cookie name
+    sameSite: "none",
+    // Required for cross-origin
+    secure: true,
+    // Required for HTTPS
+    httpOnly: true,
+    // Security best practice
+    path: "/",
+    // Accessible on all paths
+    domain: ".vercel.app"
+    // Use wildcard domain for Vercel
+    // OR use specific domain if needed:
+    // domain: "skillbridgebackend-zeta.vercel.app",
+  },
+  // 🔥 CRITICAL: Session configuration
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    // 7 days
+    updateAge: 60 * 60 * 24
+    // Update every 24 hours
+  },
+  // User fields
   user: {
     additionalFields: {
       role: {
@@ -289,6 +322,7 @@ var auth = betterAuth({
       }
     }
   },
+  // Authentication methods
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
@@ -374,7 +408,13 @@ var auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }
   },
-  // ✅ THIS IS THE CORRECT WAY - Use hooks.before to check ban status BEFORE sign-in completes
+  // 🔥 OPTIONAL but recommended: Add CORS configuration
+  cors: {
+    origin: ["http://localhost:3000", process.env.APP_URL],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
+  },
+  // ✅ Keep your existing hooks
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       const isSignInPath = ctx.path === "/sign-in/email" || ctx.path === "/sign-in/social" || ctx.path.startsWith("/callback");
@@ -3251,13 +3291,22 @@ function globalError(err, req, res, next) {
 var app = express9();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 app.use(express9.json());
+app.get("/api/auth/session", async (req, res) => {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session) return res.status(200).json(null);
+    return res.status(200).json(session);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to get session" });
+  }
+});
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api", router_default);
 app.get("/", (req, res) => {

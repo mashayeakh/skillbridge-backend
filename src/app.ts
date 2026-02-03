@@ -22,15 +22,15 @@ app.use(
 app.use(express.json());
 
 // 3. Explicit session route FIRST
-// app.get("/api/auth/session", async (req, res) => {
-//     try {
-//         const session = await auth.api.getSession({ headers: req.headers });
-//         if (!session) return res.status(200).json(null);
-//         return res.status(200).json(session);
-//     } catch (err) {
-//         return res.status(500).json({ error: "Failed to get session" });
-//     }
-// });
+app.get("/api/auth/session", async (req, res) => {
+    try {
+        const session = await auth.api.getSession({ headers: req.headers });
+        if (!session) return res.status(200).json(null);
+        return res.status(200).json(session);
+    } catch (err) {
+        return res.status(500).json({ error: "Failed to get session" });
+    }
+});
 
 
 // 3. Explicit session route FIRST

@@ -13,7 +13,7 @@ router.get(
 
 router.post(
     "/categories",
-    authMiddleware(Role.TUTOR),
+    authMiddleware(Role.ADMIN),
     AdminController.createCategory
 );
 
@@ -47,10 +47,10 @@ router.get(
 );
 
 
-// router.get(
-//     "/categories",
-//     AdminController.getAllCategories
-// );
+router.get(
+    "/categories", authMiddleware(Role.ADMIN),
+    AdminController.getAllCategories
+);
 
 
 router.patch(

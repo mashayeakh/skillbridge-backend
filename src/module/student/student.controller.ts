@@ -4,6 +4,8 @@ import { StudentService } from './student.service';
 import { success } from 'better-auth/*';
 import { BookingService } from '../bookings/bookings.service';
 import { AppError } from '../../error/appErrors';
+import { auth } from '../../lib/auth';
+import { prisma } from '../../lib/prisma';
 
 
 
@@ -103,6 +105,209 @@ export const StudentController = {
             })
         }
     ),
+
+    //session /api/auth/session", 
+    sessionStd: asyncHandler(async (req: Request, res: Response) => {
+        const session = await auth.api.getSession({ headers: req.headers });
+
+        if (!session) {
+            return res.status(200).json(null);
+        }
+
+        const userId = session.user.id;
+        const role = session.user.role;
+
+        let bookings: any[] = [];
+        let upcomingSessions: any[] = [];
+        let totalBookings = 0;
+        let upcomingCount = 0;
+
+        // =======================
+        // STUDENT
+        // =======================
+        if (role === "STUDENT") {
+            bookings = await prisma.booking.findMany({
+                where: { studentId: userId },
+                include: {
+                    tutorProfile: {
+                        select: {
+                            id: true,
+                            name: true,
+                            bio: true,
+                            hourlyRate: true,
+                            rating: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: "desc" },
+                take: 5,
+            });
+
+            upcomingSessions = await prisma.booking.findMany({
+                where: {
+                    studentId: userId,
+                    status: "CONFIRMED",
+                    OR: [
+                        { startTime: { gte: new Date() } },
+                        { startTime: null },
+                    ],
+                },
+                include: {
+                    tutorProfile: {
+                        select: { id: true, name: true },
+                    },
+                },
+                orderBy: { startTime: "asc" },
+                take: 3,
+            });
+
+            totalBookings = await prisma.booking.count({
+                where: { studentId: userId },
+            });
+
+            upcomingCount = await prisma.booking.count({
+                where: {
+                    studentId: userId,
+                    status: "CONFIRMED",
+                    OR: [
+                        { startTime: { gte: new Date() } },
+                        { startTime: null },
+                    ],
+                },
+            });
+        }
+
+        // =======================
+        // TUTOR
+        // =======================
+        if (role === "TUTOR") {
+            const tutorProfile = await prisma.tutorProfile.findFirst({
+                where: { userId },
+            });
+
+            if (tutorProfile) {
+                bookings = await prisma.booking.findMany({
+                    where: { tutorProfileId: tutorProfile.id },
+                    include: {
+                        student: {
+                            select: {
+                                id: true,
+                                name: true,
+                                email: true,
+                                phone: true,
+                            },
+                        },
+                    },
+                    orderBy: { createdAt: "desc" },
+                    take: 5,
+                });
+
+                upcomingSessions = await prisma.booking.findMany({
+                    where: {
+                        tutorProfileId: tutorProfile.id,
+                        status: "CONFIRMED",
+                        OR: [
+                            { startTime: { gte: new Date() } },
+                            { startTime: null },
+                        ],
+                    },
+                    include: {
+                        student: {
+                            select: { id: true, name: true },
+                        },
+                    },
+                    orderBy: { startTime: "asc" },
+                    take: 3,
+                });
+
+                totalBookings = await prisma.booking.count({
+                    where: { tutorProfileId: tutorProfile.id },
+                });
+
+                upcomingCount = await prisma.booking.count({
+                    where: {
+                        tutorProfileId: tutorProfile.id,
+                        status: "CONFIRMED",
+                        OR: [
+                            { startTime: { gte: new Date() } },
+                            { startTime: null },
+                        ],
+                    },
+                });
+            }
+        }
+
+        // =======================
+        // FORMAT BOOKINGS
+        // =======================
+        const formattedBookings = bookings.map((booking) => ({
+            id: booking.id,
+            status: booking.status,
+            price: booking.price,
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            createdAt: booking.createdAt,
+            ...(role === "STUDENT"
+                ? {
+                    tutor: booking.tutorProfile
+                        ? {
+                            id: booking.tutorProfile.id,
+                            name: booking.tutorProfile.name,
+                            subject: booking.tutorProfile.bio
+                                ? booking.tutorProfile.bio
+                                    .split(" ")
+                                    .slice(0, 3)
+                                    .join(" ") + "..."
+                                : "N/A",
+                            rate: booking.tutorProfile.hourlyRate,
+                        }
+                        : null,
+                }
+                : {
+                    student: booking.student
+                        ? {
+                            id: booking.student.id,
+                            name: booking.student.name,
+                            email: booking.student.email,
+                            phone: booking.student.phone,
+                        }
+                        : null,
+                }),
+        }));
+
+        const formattedUpcoming = upcomingSessions.map((b) => ({
+            id: b.id,
+            startTime: b.startTime,
+            endTime: b.endTime,
+            status: b.status,
+            ...(role === "STUDENT"
+                ? { tutorName: b.tutorProfile?.name }
+                : { studentName: b.student?.name }),
+        }));
+
+        const enhancedSession = {
+            ...session,
+            stats: {
+                totalBookings,
+                upcomingCount,
+                completedCount: totalBookings - upcomingCount,
+                totalEarned: bookings.reduce(
+                    (sum, b) => sum + (b.price || 0),
+                    0
+                ),
+            },
+            recentBookings: formattedBookings,
+            upcomingSessions: formattedUpcoming,
+            user: {
+                ...session.user,
+                joinedDate: session.user.createdAt
+                    ? new Date(session.user.createdAt).toLocaleDateString()
+                    : "N/A",
+            },
+        };
+
+        return res.status(200).json(enhancedSession);
+    })
 
 
 }

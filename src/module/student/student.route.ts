@@ -3,6 +3,7 @@ import { authMiddleware } from '../../middleware/auth';
 import { Role } from '../../types/role';
 import { StudentController } from './student.controller';
 import { auth } from '../../lib/auth';
+import route from '../../router';
 
 
 const router = express.Router();
@@ -18,6 +19,8 @@ router.get("/profile", authMiddleware(Role.STUDENT), StudentController.viewOwnPr
 router.put("/update-profile", authMiddleware(Role.STUDENT), StudentController.updateOwnProfile);
 
 router.put("/delete-profile", authMiddleware(Role.STUDENT), StudentController.deleteOwnProfile);
+
+router.get("/auth/session", StudentController.sessionStd);
 
 
 

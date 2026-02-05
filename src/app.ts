@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
@@ -8,57 +7,70 @@ import { globalError } from "./middleware/globalErrorHandler";
 
 export const app = express();
 
-// 1. CORS
+// 1. CORS Configuration
+const allowedOrigins = [
+    process.env.APP_URL || "http://localhost:3000",
+    process.env.PROD_APP_URL || "https://skillbridgefrontend-delta.vercel.app",
+    "https://skillbridgefrontend-delta.vercel.app",
+    "http://localhost:3000",
+].filter(Boolean); // Remove undefined values
+
 app.use(
     cors({
-        origin: process.env.CLIENT_URL,
+        origin: (origin, callback) => {
+            // Allow requests with no origin (mobile apps, Postman, etc.)
+            if (!origin) return callback(null, true);
+
+            // Check if origin is in allowedOrigins or matches Vercel preview pattern
+            const isAllowed =
+                allowedOrigins.includes(origin) ||
+                /^https:\/\/skillbridgefrontend.*\.vercel\.app$/.test(origin) ||
+                /^https:\/\/.*-mashayeakhs-projects\.vercel\.app$/.test(origin); // Vercel preview URLs
+
+            if (isAllowed) {
+                callback(null, true);
+            } else {
+                console.log(`CORS blocked origin: ${origin}`);
+                callback(new Error(`Origin ${origin} not allowed by CORS`));
+            }
+        },
         credentials: true,
-        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"]
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
+        exposedHeaders: ["Set-Cookie"],
     })
 );
 
 // 2. Body parser
 app.use(express.json());
 
-// 3. Explicit session route FIRST
+// 3. Health check endpoint
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// 4. Explicit session route FIRST
 app.get("/api/auth/session", async (req, res) => {
     try {
         const session = await auth.api.getSession({ headers: req.headers });
         if (!session) return res.status(200).json(null);
         return res.status(200).json(session);
     } catch (err) {
+        console.error("Session error:", err);
         return res.status(500).json({ error: "Failed to get session" });
     }
 });
 
+// 5. Better Auth wildcard AFTER session
+app.all("/api/auth/*", toNodeHandler(auth));
 
-// 3. Explicit session route FIRST
-// app.get("/api/auth/session", async (req, res) => {
-//     try {
-//         const session = await auth.api.getSession({ headers: req.headers });
-//         if (!session) return res.status(200).json(null);
-
-//         // fetch actual user object using session.userId
-//         const user = await prisma.user.findUnique({ where: { id: session.session.userId } });
-
-//         return res.status(200).json({ user, token: session.session.token });
-//     } catch (err) {
-//         return res.status(500).json({ error: "Failed to get session" });
-//     }
-// });
-
-// 4. Better Auth wildcard AFTER session
-app.all("/api/auth/*splat", toNodeHandler(auth));
-
-// 5. Other routes
+// 6. Other routes
 app.use("/api", route);
 
-// 6. Root
+// 7. Root
 app.get("/", (req, res) => {
     res.send("Hello Backend!");
 });
 
-// 7. Global error
+// 8. Global error
 app.use(globalError);
-

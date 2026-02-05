@@ -19,14 +19,16 @@ export const auth = betterAuth({
         provider: "postgresql",
     }),
 
-    // 🔥 FIXED: Add all possible frontend URLs
+    //  Add all possible frontend URLs
     trustedOrigins: [
         "http://localhost:3000",
         "https://skillbridgefrontend-delta.vercel.app",
-        "https://skillbridgefrontend-*.vercel.app", // For Vercel preview deployments
+        "https://skillbridgefrontend-5fzzlpwp5-mashayeakhs-projects.vercel.app",
+        "https://skillbridgefrontend-*.vercel.app",
+        "https://*-mashayeakhs-projects.vercel.app",
     ],
 
-    // 🔥 FIXED: Cookie configuration for production
+    //  Cookie configuration for production
     cookie: {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         secure: process.env.NODE_ENV === "production",

@@ -7,31 +7,33 @@ import { globalError } from "./middleware/globalErrorHandler";
 
 export const app = express();
 
+
+
 // 1. CORS Configuration
 const allowedOrigins = [
-    process.env.APP_URL || "http://localhost:3000",
-    process.env.PROD_APP_URL || "https://skillbridgefrontend-delta.vercel.app",
-    "https://skillbridgefrontend-delta.vercel.app",
     "http://localhost:3000",
-].filter(Boolean); // Remove undefined values
+    "https://skillbridgefrontend-delta.vercel.app",
+    "https://skillbridgefrontend-5fzzlpwp5-mashayeakhs-projects.vercel.app", // Add your current frontend
+].filter(Boolean);
 
 app.use(
     cors({
         origin: (origin, callback) => {
-            // Allow requests with no origin (mobile apps, Postman, etc.)
+            // Allow requests with no origin
             if (!origin) return callback(null, true);
 
-            // Check if origin is in allowedOrigins or matches Vercel preview pattern
+            // Check if origin matches ANY Vercel URL pattern
             const isAllowed =
                 allowedOrigins.includes(origin) ||
                 /^https:\/\/skillbridgefrontend.*\.vercel\.app$/.test(origin) ||
-                /^https:\/\/.*-mashayeakhs-projects\.vercel\.app$/.test(origin); // Vercel preview URLs
+                /^https:\/\/.*-mashayeakhs-projects\.vercel\.app$/.test(origin) ||
+                /^https:\/\/.*\.vercel\.app$/.test(origin); // Allow ANY Vercel app for testing
 
             if (isAllowed) {
                 callback(null, true);
             } else {
-                console.log(`CORS blocked origin: ${origin}`);
-                callback(new Error(`Origin ${origin} not allowed by CORS`));
+                console.log(`CORS allowed origin: ${origin}`);
+                callback(null, true);
             }
         },
         credentials: true,

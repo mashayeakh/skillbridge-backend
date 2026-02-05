@@ -1,8 +1,9 @@
 import { prisma } from "../../../lib/prisma";
 
 export const AdminDashboardService = {
+
     async getPlatformAnalytics() {
-        // USERS 
+        // USER METRICS
         const totalUsers = await prisma.user.count();
 
         const studentsCount = await prisma.user.count({
@@ -13,7 +14,7 @@ export const AdminDashboardService = {
             where: { role: "TUTOR" },
         });
 
-        // BOOKINGS 
+        // BOOKING METRICS
         const totalBookings = await prisma.booking.count();
 
         const confirmedBookings = await prisma.booking.count({
@@ -28,7 +29,7 @@ export const AdminDashboardService = {
             where: { status: "COMPLETED" },
         });
 
-        // REVENUE
+        // REVENUE METRICS
         const revenueAgg = await prisma.booking.aggregate({
             where: { status: "COMPLETED" },
             _sum: { price: true },
@@ -38,7 +39,7 @@ export const AdminDashboardService = {
         const totalRevenue = revenueAgg._sum.price || 0;
         const averageBookingPrice = revenueAgg._avg.price || 0;
 
-        // PLATFORM HEALTH 
+        // PLATFORM HEALTH
         const activeUsers = await prisma.user.count({
             where: {
                 studentBookings: {
@@ -75,7 +76,6 @@ export const AdminDashboardService = {
         };
     },
 
-
     async getAllUsers() {
         return prisma.user.findMany({
             select: {
@@ -88,17 +88,19 @@ export const AdminDashboardService = {
                 createdAt: true,
                 updatedAt: true,
                 studentBookings: {
-                    select: { id: true }
+                    select: { id: true },
                 },
                 tutorProfile: {
-                    select: { id: true }
-                }
+                    select: { id: true },
+                },
             },
-            orderBy: { createdAt: "desc" }
+            orderBy: {
+                createdAt: "desc",
+            },
         });
     },
 
-    //  Verification stats
+    // User verification statistics
     async getVerificationSummary() {
         const [verified, unverified] = await Promise.all([
             prisma.user.count({ where: { emailVerified: true } }),
@@ -111,7 +113,7 @@ export const AdminDashboardService = {
         };
     },
 
-    // 3. Update user status
+    // Update user account status
     async updateUserStatus(userId: string, status: string) {
         return prisma.user.update({
             where: { id: userId },
@@ -119,7 +121,7 @@ export const AdminDashboardService = {
         });
     },
 
-    // 4. Update user role
+    // Update user role
     async updateUserRole(userId: string, role: string) {
         return prisma.user.update({
             where: { id: userId },
@@ -127,7 +129,7 @@ export const AdminDashboardService = {
         });
     },
 
-    // 5. Export users (CSV-ready)
+    // Export users for reports / CSV
     async exportUsers() {
         return prisma.user.findMany({
             select: {
@@ -140,5 +142,6 @@ export const AdminDashboardService = {
                 createdAt: true,
             },
         });
-    }
+    },
+
 };

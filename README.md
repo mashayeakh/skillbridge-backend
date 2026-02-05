@@ -1,200 +1,307 @@
-"# SkillBridge - Backend
+# SkillBridge - Backend API
 
-A full-stack web application that connects learners with expert tutors, enabling seamless learning experiences.
+A robust backend service for a comprehensive tutoring platform that connects learners with expert tutors, enabling seamless learning experiences.
 
-## Project Overview
+## 📋 Project Overview
 
-SkillBridge is a comprehensive tutoring platform built with modern web technologies. Students can browse tutor profiles, view availability, and book sessions instantly. Tutors can manage their profiles, set availability, and track their teaching sessions. Admins oversee the platform and manage users to ensure quality and safety.
+SkillBridge Backend is a production-ready REST API built with modern web technologies. It provides a scalable foundation for a tutoring marketplace where:
 
-## Tech Stack
+- **Students** can discover qualified tutors, view real-time availability, and book personalized learning sessions
+- **Tutors** can manage professional profiles, define flexible availability schedules, and track teaching engagements
+- **Administrators** oversee platform operations, manage user accounts, and monitor analytics
 
-- **Backend Framework**: Express.js
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Language**: TypeScript
-- **Runtime**: Node.js
+The platform implements enterprise-grade authentication, role-based access control, and comprehensive error handling.
 
-## Roles & Permissions
+## 🛠️ Tech Stack
 
-| Role        | Description                         | Key Permissions                                                  |
-| ----------- | ----------------------------------- | ---------------------------------------------------------------- |
-| **Student** | Learners who book tutoring sessions | Browse tutors, book sessions, leave reviews, manage profile      |
-| **Tutor**   | Experts who offer tutoring services | Create profile, set availability, view bookings, manage subjects |
-| **Admin**   | Platform moderators                 | Manage all users, view analytics, moderate content               |
+| Component     | Technology        |
+| ------------- | ----------------- |
+| **Framework** | Express.js (v4.x) |
+| **Language**  | TypeScript        |
+| **Runtime**   | Node.js (v16+)    |
+| **Database**  | PostgreSQL (v12+) |
+| **ORM**       | Prisma            |
 
-💡 **Note**: Users select their role during registration. Admin accounts should be seeded in the database.
+## 👥 User Roles & Permissions
 
-## Project Structure
+| Role        | Responsibilities                   | Permissions                                                                              |
+| ----------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Student** | Learning through tutoring sessions | Browse tutors, book sessions, leave reviews, manage profile and bookings                 |
+| **Tutor**   | Providing tutoring services        | Create/update profile, set availability, view bookings, manage subjects and availability |
+| **Admin**   | Platform governance & operations   | Manage users, view analytics, moderate content, system management                        |
+
+> **Note**: Users select their role during registration. Admin accounts should be created via database seeding or direct database administration.
+
+## 📁 Project Structure
 
 ```
 Backend/
-├── src/
-│   ├── app.ts                 # Express app setup
-│   ├── server.ts              # Server entry point
-│   ├── middleware/            # Custom middleware (auth, error handling)
+├── src/                       # Application source code
+│   ├── app.ts                 # Express application setup
+│   ├── server.ts              # Server entry point and initialization
+│   ├── middleware/            # Custom middleware (authentication, error handling)
 │   ├── module/                # Feature modules (admin, bookings, student, tutor, etc.)
-│   ├── lib/                   # Utility libraries (Prisma, auth)
-│   ├── utils/                 # Helper functions
+│   │   ├── admin/             # Admin dashboard and management
+│   │   ├── bookings/          # Booking management logic
+│   │   ├── student/           # Student-specific features
+│   │   ├── tutor/             # Tutor profile and management
+│   │   ├── categories/        # Category/subject management
+│   │   └── public/            # Public-facing features
+│   ├── lib/                   # Shared libraries (Prisma, authentication)
+│   ├── utils/                 # Helper functions and utilities
 │   ├── types/                 # TypeScript type definitions
-│   └── router/                # Route configuration
+│   ├── error/                 # Custom error classes
+│   └── router/                # Route configuration and aggregation
 ├── prisma/
-│   ├── schema/                # Prisma schema files
-│   ├── migrations/            # Database migrations
-│   └── generated/             # Generated Prisma client
-├── api/                       # API deployment configuration
-└── tsconfig.json              # TypeScript configuration
+│   ├── schema/                # Prisma schema definitions (modular)
+│   ├── migrations/            # Database migration history
+│   └── generated/             # Auto-generated Prisma client
+├── tsconfig.json              # TypeScript configuration
+└── package.json               # Project dependencies and scripts
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
+- **Node.js** v16 or higher
+- **npm** v8 or higher (or yarn)
+- **PostgreSQL** v12 or higher
+- **Git** for version control
 
-### Installation
+### Installation & Setup
 
-1. **Clone the repository**
+#### 1. Clone the Repository
 
-   ```bash
-   git clone <repository-url>
-   cd Backend
-   ```
+```bash
+git clone <repository-url>
+cd Backend
+```
 
-2. **Install dependencies**
+#### 2. Install Dependencies
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-3. **Setup environment variables**
-   Create a `.env` file in the root directory:
+#### 3. Configure Environment Variables
 
-   ```
-   DATABASE_URL="postgresql://user:password@localhost:5432/skillbridge"
-   NODE_ENV="development"
-   PORT=3000
-   JWT_SECRET=your_jwt_secret_key
-   ```
+Create a `.env` file in the root directory with the following variables:
 
-4. **Setup database**
+```env
+# Database Configuration
+DATABASE_URL="postgresql://user:password@localhost:5432/skillbridge"
 
-   ```bash
-   npm run prisma:push
-   # or for migrations
-   npm run prisma:migrate
-   ```
+# Application Configuration
+NODE_ENV="development"
+PORT=3000
 
-5. **Seed the database (optional)**
+# Authentication
+JWT_SECRET=your_highly_secure_jwt_secret_key_change_in_production
+```
 
-   ```bash
-   npm run prisma:seed
-   ```
+#### 4. Setup Database
 
-6. **Start the server**
+```bash
+# Sync Prisma schema with database
+npm run prisma:push
 
-   ```bash
-   npm run dev
-   ```
+# Or create and apply migrations
+npm run prisma:migrate
+```
 
-   The server will run on `http://localhost:3000`
+#### 5. Seed Database (Optional)
 
-## Available Scripts
+```bash
+npm run prisma:seed
+```
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build TypeScript to JavaScript
-- `npm start` - Start production server
-- `npm run prisma:migrate` - Create and apply migrations
-- `npm run prisma:push` - Sync schema to database
-- `npm run prisma:studio` - Open Prisma Studio (visual database manager)
+#### 6. Start Development Server
 
-## API Modules
+```bash
+npm run dev
+```
+
+The API will be available at `http://localhost:3000`
+
+## 📦 Available Scripts
+
+| Command                  | Description                                    |
+| ------------------------ | ---------------------------------------------- |
+| `npm run dev`            | Start development server with hot reload       |
+| `npm run build`          | Compile TypeScript to JavaScript               |
+| `npm start`              | Start production server                        |
+| `npm run prisma:migrate` | Create and apply database migrations           |
+| `npm run prisma:push`    | Synchronize Prisma schema with database        |
+| `npm run prisma:studio`  | Launch Prisma Studio (visual database manager) |
+
+## 🔌 API Modules
 
 ### Public Module
 
-- Browse tutor profiles
-- View categories and tutors
+Browse and discover tutoring services without authentication
+
+- Search tutor profiles
+- View available tutoring categories
+- Filter tutors by specialty and availability
 
 ### Student Module
 
-- Dashboard
-- Book tutoring sessions
-- Manage profile and bookings
-- Leave reviews
+Complete learning and session management
+
+- Personal dashboard with booking history
+- Book tutoring sessions with available tutors
+- Manage profile and account settings
+- Submit reviews and ratings for completed sessions
+- Track upcoming and past bookings
 
 ### Tutor Module
 
-- Manage profile
-- Set availability
-- View student bookings
-- Manage subjects/categories
+Professional profile and teaching management
+
+- Create and manage tutor profile with qualifications
+- Set and update teaching availability schedules
+- View and manage student bookings
+- Manage teaching subjects and categories
+- Monitor earnings and session history
 
 ### Admin Module
 
-- Dashboard with analytics
-- Manage all users
-- Monitor bookings
+Platform administration and analytics
+
+- Comprehensive admin dashboard with key metrics
+- Manage all platform users (create, update, deactivate)
+- Monitor and manage all bookings
+- Generate analytics and reports
+- Content moderation and platform oversight
 
 ### Bookings Module
 
-- Create and manage bookings
-- Track booking status
+Session booking and management system
+
+- Create new tutoring session bookings
+- Update booking status and details
+- Cancel or reschedule sessions
+- Track booking lifecycle and history
 
 ### Categories Module
 
-- Manage tutoring categories
-- Filter tutors by category
+Tutoring subjects and specialization management
 
-## Database Schema
+- Manage available tutoring categories/subjects
+- Organize tutoring offerings
+- Filter and categorize tutors by expertise
 
-The project uses Prisma with the following main entities:
+## 🗄️ Database Schema
 
-- **User** - Core user information with role-based authentication
-- **TutorProfile** - Extended tutor information
-- **Category** - Tutoring subjects/categories
-- **Booking** - Session bookings between students and tutors
-- **Review** - Student reviews for tutors
-- **TutorAvailability** - Tutor availability slots
+The application uses PostgreSQL with Prisma ORM and defines the following core entities:
 
-## Authentication
+| Entity                | Purpose                                                   |
+| --------------------- | --------------------------------------------------------- |
+| **User**              | Core user account with authentication and role management |
+| **TutorProfile**      | Extended professional information for tutor accounts      |
+| **Category**          | Tutoring subjects, specializations, and course categories |
+| **Booking**           | Tutoring session bookings and scheduling                  |
+| **Review**            | Student feedback and ratings for completed sessions       |
+| **TutorAvailability** | Tutor availability slots and scheduling                   |
 
-- JWT-based authentication
-- Role-based access control (RBAC)
-- Protected routes via middleware
+All schema definitions are located in the `prisma/schema/` directory for better organization and maintainability.
 
-### Default Admin Credentials
+## 🔐 Authentication & Authorization
 
-For development and testing purposes, use the following admin account:
+### Security Implementation
 
-- **Email**: `elonmusk@tesla.com`
-- **Password**: `elonmusk123`
+- **JWT (JSON Web Tokens)** for stateless authentication
+- **Role-Based Access Control (RBAC)** for fine-grained permissions
+- **Protected routes** via middleware authentication
+- **Password security** with industry-standard practices
 
-⚠️ **Important**: Change these credentials in production. This account should be deleted or updated with secure credentials before deploying to production.
+### Default Admin Account (Development Only)
 
-## Error Handling
+For development and testing purposes, the following credentials are provided:
 
-Global error handler middleware processes all application errors and returns consistent error responses.
+| Field        | Value                |
+| ------------ | -------------------- |
+| **Email**    | `elonmusk@tesla.com` |
+| **Password** | `elonmusk123`        |
 
-## Development Workflow
+> ⚠️ **CRITICAL - PRODUCTION SECURITY**: This default account MUST be deleted or updated with secure credentials before deploying to production. Do not use development credentials in live environments.
 
-1. Create feature branch from `main`
-2. Follow TypeScript best practices
-3. Use Prisma migrations for schema changes
-4. Test API endpoints before pushing
-5. Create pull request for code review
+## ⚠️ Error Handling
 
-## Contributing
+The application implements a global error handling middleware that:
 
-1. Follow the existing code structure
-2. Use TypeScript for all new code
-3. Add proper type definitions
-4. Keep modules focused and single-responsibility
+- Catches and processes all application errors
+- Returns consistent, structured error responses
+- Implements proper HTTP status codes
+- Provides meaningful error messages for debugging
+- Logs errors for monitoring and analysis
 
-## Support
+All errors follow a standardized response format for predictable client-side handling.
 
-For issues or questions, please create an issue in the repository.
+## 💻 Development Workflow
+
+### Best Practices
+
+1. **Branching**: Create feature branches from `main` with descriptive names
+2. **Code Quality**: Follow TypeScript best practices and maintain type safety
+3. **Database Changes**: Use Prisma migrations for all schema modifications
+4. **Testing**: Test all API endpoints before committing changes
+5. **Code Review**: Submit pull requests for peer review before merging
+
+### Commit Guidelines
+
+- Write clear, descriptive commit messages
+- Reference related issues in commit messages
+- Keep commits focused on single features or fixes
+
+## 🤝 Contributing
+
+We welcome contributions to SkillBridge Backend. Please follow these guidelines:
+
+1. **Code Standards**
+   - Write all new code in TypeScript
+   - Add proper type definitions and interfaces
+   - Follow existing code style and conventions
+   - Ensure proper error handling
+
+2. **Architecture**
+   - Keep modules focused and single-responsibility
+   - Maintain separation of concerns (controllers, services, repositories)
+   - Document complex logic with comments
+   - Reuse existing utilities and helpers
+
+3. **Database**
+   - Create migrations for all schema changes
+   - Name migrations descriptively
+   - Test migrations in development before committing
+
+4. **Submission**
+   - Create a descriptive pull request
+   - Include details of changes and reasoning
+   - Ensure all tests pass before submission
+   - Address code review feedback promptly
+
+## 📞 Support & Documentation
+
+### Getting Help
+
+- **Issues**: Report bugs or request features via GitHub Issues
+- **Discussions**: Ask questions and share ideas in Discussions
+- **Documentation**: Check the project wiki for detailed guides
+
+### Useful Resources
+
+- [Express.js Documentation](https://expressjs.com/)
+- [TypeScript Documentation](https://www.typescriptlang.org/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ---
 
-**Last Updated**: February 2026"
+## 📄 License
+
+This project is part of an academic assignment. All rights reserved.
+
+**Last Updated**: February 2026  
+**Status**: Active Development"

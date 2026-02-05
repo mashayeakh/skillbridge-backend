@@ -41,7 +41,7 @@ route.use("/public", PublicRouter);
 route.use("/student/dashboard", StudentDashboardRouter);
 
 // tutor dashboard -
-route.use("/tutor/dashboard", TutorDashboardRouter);
+route.use("/tutor/dashboard/overall", TutorDashboardRouter);
 
 //admin dashboard - 
 route.use("/admin/dashboard", AdminDashboardRouter);

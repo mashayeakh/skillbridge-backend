@@ -74,4 +74,13 @@ export const PublicService = {
         });
     },
 
+    //! all students
+    async getAllStudents(includeInactive = true) {
+        return await prisma.user.findMany({
+            where: {
+                role: "STUDENT"
+            }
+        });
+    },
+
 };

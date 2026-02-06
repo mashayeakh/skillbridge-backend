@@ -35,7 +35,6 @@ export const auth = betterAuth({
             "https://skillbridgefrontend-5fzzlpwp5-mashayeakhs-projects.vercel.app",
         ].filter(Boolean);
 
-        // Check if origin matches allowed origins or Vercel pattern
         if (
             !origin ||
             allowedOrigins.includes(origin) ||
@@ -48,7 +47,14 @@ export const auth = betterAuth({
         return [];
     },
 
-
+    cookie: {
+        name: "better-auth.session_token",
+        sameSite: "none", // Required for cross-origin
+        secure: true,     // Required for production
+        httpOnly: true,   // Security best practice
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+    },
 
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -61,7 +67,7 @@ export const auth = betterAuth({
 
     advanced: {
         cookiePrefix: "better-auth",
-        useSecureCookies: process.env.NODE_ENV === "production",
+        useSecureCookies: true, // Force secure in production
         crossSubDomainCookies: {
             enabled: false,
         },

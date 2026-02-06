@@ -15,26 +15,40 @@ const transporter = nodemailer.createTransport({
 });
 
 export const auth = betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL,
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5000",
     basePath: "/api/auth",
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
 
-    //  Add all possible frontend URLs
-    trustedOrigins: [
-        "http://localhost:3000",
-        "https://skillbridgefrontend-delta.vercel.app",
-        "https://skillbridgefrontend-5fzzlpwp5-mashayeakhs-projects.vercel.app",
-        "https://skillbridgefrontend-*.vercel.app",
-        "https://*-mashayeakhs-projects.vercel.app",
-    ],
+    trustedOrigins: async (request) => {
+        const origin = request?.headers.get("origin");
 
-    //  Cookie configuration for production
-    cookie: {
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production",
+        const allowedOrigins = [
+            process.env.APP_URL,
+            process.env.PROD_APP_URL,
+            process.env.BETTER_AUTH_URL,
+            "http://localhost:3000",
+            "http://localhost:4000",
+            "http://localhost:5000",
+            "https://skillbridgefrontend-delta.vercel.app",
+            "https://skillbridgefrontend-5fzzlpwp5-mashayeakhs-projects.vercel.app",
+        ].filter(Boolean);
+
+        // Check if origin matches allowed origins or Vercel pattern
+        if (
+            !origin ||
+            allowedOrigins.includes(origin) ||
+            /^https:\/\/skillbridgefrontend.*\.vercel\.app$/.test(origin) ||
+            /^https:\/\/.*-mashayeakhs-projects\.vercel\.app$/.test(origin)
+        ) {
+            return [origin].filter(Boolean);
+        }
+
+        return [];
     },
+
+
 
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -46,13 +60,12 @@ export const auth = betterAuth({
     },
 
     advanced: {
-        cookiePrefix: "skillbridge",
+        cookiePrefix: "better-auth",
         useSecureCookies: process.env.NODE_ENV === "production",
         crossSubDomainCookies: {
-            enabled: true,
-            baseDomain: ".vercel.app"
+            enabled: false,
         },
-        disableCSRFCheck: false,
+        disableCSRFCheck: true,
     },
 
     user: {
@@ -83,9 +96,8 @@ export const auth = betterAuth({
     emailVerification: {
         sendOnSignUp: true,
         autoSignInAfterVerification: true,
-        sendVerificationEmail: async ({ user, token }, request) => {
+        sendVerificationEmail: async ({ user, url, token }, request) => {
             try {
-                // 🔥 FIXED: Use correct environment variable
                 const frontendUrl = process.env.NODE_ENV === "production"
                     ? process.env.PROD_APP_URL
                     : process.env.APP_URL;
@@ -128,7 +140,7 @@ export const auth = betterAuth({
                                     If the button doesn't work, copy and paste this link into your browser:
                                 </p>
                                 <p style="word-break: break-all; font-size: 12px; color: #2563eb;">
-                                    ${verificationUrl}
+                                    ${url}
                                 </p>
                                 <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
                                 <p style="color: #9ca3af; font-size: 12px;">

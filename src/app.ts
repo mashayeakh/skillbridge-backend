@@ -51,10 +51,11 @@ app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// 4. Explicit session route FIRST
+// // 4. Explicit session route FIRST
 app.get("/api/auth/session", async (req, res) => {
     try {
         const session = await auth.api.getSession({ headers: req.headers });
+        console.log("SESSION", session)
         if (!session) return res.status(200).json(null);
         return res.status(200).json(session);
     } catch (err) {
@@ -64,7 +65,9 @@ app.get("/api/auth/session", async (req, res) => {
 });
 
 // 5. Better Auth wildcard AFTER session
-app.all("/api/auth/*", toNodeHandler(auth));
+// app.all("/api/auth/*splat", toNodeHandler(auth));
+// app.all("/api/auth", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // 6. Other routes
 app.use("/api", route);

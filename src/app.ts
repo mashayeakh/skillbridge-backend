@@ -47,8 +47,8 @@ app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// 4. Better Auth routes - Let Better Auth handle ALL auth routes
-app.all("/api/auth/*splat", toNodeHandler(auth));
+// 4. Better Auth routes
+app.use("/api/auth", toNodeHandler(auth));
 
 // 5. Other routes
 app.use("/api", route);
@@ -58,5 +58,13 @@ app.get("/", (req, res) => {
     res.send("Hello Backend!");
 });
 
-// 7. Global error
+// 7. 404 Handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: `API Route ${req.originalUrl} not found`,
+    });
+});
+
+// 8. Global error
 app.use(globalError);

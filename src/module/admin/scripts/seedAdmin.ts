@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import { auth } from "../../../lib/auth";
 
 
-async function main() {
+export async function seedAdmin() {
     process.env.NODE_ENV = "seeding";
     console.log("***  Seeding Admin User...  ***");
 
@@ -52,11 +52,13 @@ async function main() {
     console.log(`*** User ${adminEmail} is now an ADMIN ***`);
 }
 
-main()
-    .catch((e) => {
-        console.error("*** Error seeding admin user ***", e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+if (require.main === module) {
+    seedAdmin()
+        .catch((e) => {
+            console.error("*** Error seeding admin user ***", e);
+            process.exit(1);
+        })
+        .finally(async () => {
+            await prisma.$disconnect();
+        });
+}

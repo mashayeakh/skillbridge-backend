@@ -10,6 +10,7 @@ import { PublicRouter } from "../module/public/public.route";
 import { StudentDashboardRouter } from "../module/student/dashboard/dashboard.route";
 import { TutorDashboardRouter } from "../module/tutor/dashboard/dashboard.route";
 import { AdminDashboardRouter } from "../module/admin/dashboard/dashboard.route";
+import { BlogRouter } from "../module/blog/blog.router";
 
 const route = Router();
 
@@ -46,5 +47,7 @@ route.use("/tutor/dashboard/overall", TutorDashboardRouter);
 //admin dashboard - 
 route.use("/admin/dashboard", AdminDashboardRouter);
 
+//blog
+route.use("/blog", BlogRouter);
 
 export default route;

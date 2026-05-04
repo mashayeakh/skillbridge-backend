@@ -62,17 +62,9 @@ export const PublicController = {
     getAllCategories: asyncHandler(
         async (req: Request, res: Response) => {
             const result = await PublicService.getAllCategories()
-            if (result.length === 0) {
-                res.status(200).json({
-                    success: true,
-                    message: "No categories found",
-                    // count: result.length,
-                    data: result
-                })
-            }
             res.status(200).json({
                 success: true,
-                message: "Categories fetched successfully",
+                message: result.length === 0 ? "No categories found" : "Categories fetched successfully",
                 count: result.length,
                 data: result
             })
@@ -83,17 +75,9 @@ export const PublicController = {
     getAllStudents: asyncHandler(
         async (req: Request, res: Response) => {
             const result = await PublicService.getAllStudents()
-            if (result.length === 0) {
-                res.status(200).json({
-                    success: true,
-                    message: "No students found",
-                    // count: result.length,
-                    data: result
-                })
-            }
             res.status(200).json({
                 success: true,
-                message: "students fetched successfully",
+                message: result.length === 0 ? "No students found" : "students fetched successfully",
                 count: result.length,
                 data: result
             })

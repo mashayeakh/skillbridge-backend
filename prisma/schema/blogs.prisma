@@ -1,0 +1,14 @@
+
+
+model Blog {
+    id String @id @default(uuid())
+    title String
+    excerpt String
+    description String
+    category String
+    author String
+    date DateTime
+    readTime String
+    image String?
+}
+    

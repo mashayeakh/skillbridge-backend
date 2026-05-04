@@ -55,6 +55,7 @@ export const StudentDashboardService = {
         const subjectCountMap: Record<string, number> = {};
 
         allBookings.forEach((b) => {
+            if (!b.startTime || !b.endTime) return;
             const duration = (new Date(b.endTime).getTime() - new Date(b.startTime).getTime()) / (1000 * 60 * 60); // hours
             totalHours += duration;
             totalSpent += b.price;
@@ -184,6 +185,7 @@ export const StudentDashboardService = {
         const bySubjectMap: Record<string, any> = {};
 
         bookings.forEach(b => {
+            if (!b.startTime || !b.endTime) return;
             const hours =
                 (b.endTime.getTime() - b.startTime.getTime()) / 36e5;
 
@@ -251,6 +253,7 @@ export const StudentDashboardService = {
         let cancelled = 0;
 
         bookings.forEach(b => {
+            if (!b.startTime) return;
             byStatus[b.status] = (byStatus[b.status] || 0) + 1;
 
             const day = b.startTime.toLocaleDateString("en-US", { weekday: "short" });

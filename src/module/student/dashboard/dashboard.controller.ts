@@ -231,7 +231,7 @@ export const StudentDashboardController = {
                     .text(`   Subject: ${b.tutorProfile.categories}`)
                     .text(`   Status: ${b.status}`)
                     .text(`   Price: $${b.price}`)
-                    .text(`   Time: ${b.startTime.toISOString()} → ${b.endTime.toISOString()}`)
+                    .text(`   Time: ${b.startTime?.toISOString() || "N/A"} → ${b.endTime?.toISOString() || "N/A"}`)
                     .moveDown();
             });
 

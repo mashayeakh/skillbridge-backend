@@ -1,11 +1,6 @@
 import { asyncHandler } from './../../utils/asyncHandler';
 import { Request, Response } from "express";
-
-import { BookingStatus } from '../../../prisma/generated/prisma/enums';
-import { z } from "zod";
-import { AppError } from '../../error/appErrors';
 import { BlogService } from './blog.service';
-import { cleanRegex } from 'zod/v4/core/util.cjs';
 
 
 
@@ -28,43 +23,43 @@ export const BlogController = {
         }),
 
         // get all blogs
-        async getAllBlogs(req: Request, res: Response) {
+        getAllBlogs: asyncHandler(async (req: Request, res: Response) => {
             const blogs = await BlogService.getAllBlogs();
             res.status(200).json({
                 success: true,
                 data: blogs,
             });
-        },
+        }),
 
         // get blog by id
-        async getBlogById(req: Request, res: Response) {
+        getBlogById: asyncHandler(async (req: Request, res: Response) => {
             const { id } = req.params;
             const blog = await BlogService.getBlogById(id as string);
             res.status(200).json({
                 success: true,
                 data: blog,
             });
-        },
+        }),
 
         // update blog
-        async updateBlog(req: Request, res: Response) {
+        updateBlog: asyncHandler(async (req: Request, res: Response) => {
             const { id } = req.params;
             const blog = await BlogService.updateBlog(id as string, req.body);
             res.status(200).json({
                 success: true,
                 data: blog,
             });
-        },
+        }),
 
         // delete blog
-        async deleteBlog(req: Request, res: Response) {
+        deleteBlog: asyncHandler(async (req: Request, res: Response) => {
             const { id } = req.params;
             const blog = await BlogService.deleteBlog(id as string);
             res.status(200).json({
                 success: true,
                 data: blog,
             });
-        }
+        })
 
 
 }

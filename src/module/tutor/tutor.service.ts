@@ -91,6 +91,7 @@ export const TutorService = {
                 },
                 availabilities: {
                     select: {
+                        id: true,
                         startTime: true,
                         endTime: true,
                         isBooked: true,

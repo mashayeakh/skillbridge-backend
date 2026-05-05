@@ -49,8 +49,8 @@ export const auth = betterAuth({
 
     cookie: {
         name: "better-auth.session_token",
-        sameSite: "none", // Required for cross-origin
-        secure: true,     // Required for production
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
         httpOnly: true,   // Security best practice
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -67,7 +67,7 @@ export const auth = betterAuth({
 
     advanced: {
         cookiePrefix: "better-auth",
-        useSecureCookies: true, // Force secure in production
+        useSecureCookies: process.env.NODE_ENV === "production", // Force secure in production
         crossSubDomainCookies: {
             enabled: false,
         },

@@ -91,10 +91,11 @@ export const AdminController = {
     createCategory: asyncHandler(
         async (req: Request, res: Response) => {
             const payload = req.body;
+            const result = await AdminService.createCategory(payload);
             res.status(201).json({
                 success: true,
                 message: "Category created successfully",
-                data: await AdminService.createCategory(payload),
+                data: result,
             });
         }
     ),

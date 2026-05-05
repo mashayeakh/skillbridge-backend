@@ -115,4 +115,20 @@ export const BookingController = {
         }
     ),
 
+    getMyTutorBookings: asyncHandler(async (req: Request, res: Response) => {
+        if (!req.user?.id) {
+            throw new AppError(401, "Unauthorized");
+        }
+
+        console.log("🔍 Fetching bookings for Tutor User ID:", req.user.id);
+        const bookings = await BookingService.getTutorBookingsByUserId(req.user.id);
+        console.log("📦 Found bookings count:", bookings.length);
+
+        res.status(200).json({
+            success: true,
+            message: `Found ${bookings.length} unified sessions for user ${req.user.id}`,
+            data: bookings,
+        });
+    }),
+
 }

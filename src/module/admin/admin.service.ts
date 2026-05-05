@@ -133,8 +133,8 @@ export const AdminService = {
         const normalizedName = name.trim();
 
         // 3️⃣ Length validation
-        if (normalizedName.length < 3) {
-            throw new AppError(400, "Category name must be at least 3 characters long");
+        if (normalizedName.length < 2) {
+            throw new AppError(400, "Category name must be at least 2 characters long");
         }
 
         if (normalizedName.length > 50) {

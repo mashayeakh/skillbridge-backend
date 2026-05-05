@@ -306,7 +306,28 @@ export const StudentController = {
         };
 
         return res.status(200).json(enhancedSession);
-    })
+    }),
 
+    // Check if student has already booked this tutor
+    checkBooking: asyncHandler(async (req: Request, res: Response) => {
+        const { studentId, tutorId } = req.query;
 
+        if (!studentId || !tutorId) {
+            throw new AppError(400, "Missing studentId or tutorId");
+        }
+
+        const booking = await prisma.booking.findFirst({
+            where: {
+                studentId: studentId as string,
+                tutorProfileId: tutorId as string,
+                status: "CONFIRMED"
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            hasBooked: !!booking,
+            data: booking
+        });
+    }),
 }

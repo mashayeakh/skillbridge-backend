@@ -23,41 +23,35 @@ export const authMiddleware = (...roles: Role[]) => {
             // }
 
             // // check role if roles were provided
-            if (roles.length > 0 && !roles.includes(session.user.role as Role)) {
-                return res.status(403).json({ message: "Forbidden: insufficient role" });
-            }
-
-            // Check role strictly
-            // if (roles.length > 0 && !roles.includes(session.user.role as Role)) {
-            //     return res.status(403).json({ message: "Forbidden: you must be adsdd tutor" });
-            // }
-
-            req.user = {
-                id: session.user.id,
-                name: session.user.name,
-                email: session.user.email,
-                emailVerified: session.user.emailVerified,
-                role: session.user.role as Role
-            };
-
-
             const user = await prisma.user.findUnique({
-                where: { id: req.user.id }
+                where: { id: session.user.id }
             });
-
-
-            //unbanned user cant access private routes
-            // if (session.user.status === accountStatus.BANNED) {
-            //     return res.status(403).json({
-            //         message: "Your account has been banned. Contact support.",
-            //     });
-            // }
 
             if (!user || user.status === "BANNED") {
                 return res.status(403).json({
                     message: "Your account has been banned"
                 });
             }
+
+            // Check role from database
+            if (roles.length > 0) {
+                const userRole = user.role as Role;
+                const hasRequiredRole = roles.includes(userRole) || 
+                                        (roles.includes(Role.STUDENT) && (userRole === Role.TUTOR || userRole === Role.ADMIN)) ||
+                                        (roles.includes(Role.TUTOR) && userRole === Role.ADMIN);
+
+                if (!hasRequiredRole) {
+                    return res.status(403).json({ message: "Forbidden: insufficient role" });
+                }
+            }
+
+            req.user = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                emailVerified: user.emailVerified,
+                role: user.role as Role
+            };
 
             next();
         } catch (error) {

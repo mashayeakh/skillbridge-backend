@@ -100,4 +100,24 @@ export const AdminDasbhoardController = {
         });
     }),
 
+    getRevenueStats: asyncHandler(async (req: Request, res: Response) => {
+        const data = await AdminDashboardService.getRevenueStats();
+        res.status(200).json({ success: true, data });
+    }),
+
+    getGrowthStats: asyncHandler(async (req: Request, res: Response) => {
+        const data = await AdminDashboardService.getGrowthStats();
+        res.status(200).json({ success: true, data });
+    }),
+
+    getCategoryStats: asyncHandler(async (req: Request, res: Response) => {
+        const data = await AdminDashboardService.getCategoryStats();
+        res.status(200).json({ success: true, data });
+    }),
+
+    getVerificationRequests: asyncHandler(async (req: Request, res: Response) => {
+        const data = await AdminDashboardService.getVerificationRequests();
+        res.status(200).json({ success: true, data });
+    }),
+
 };

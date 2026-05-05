@@ -46,7 +46,7 @@ export const TutorAvailabilitySevice = {
         return prisma.tutorAvailability.findMany({
             where: {
                 tutorProfileId,
-                isBooked: false
+                // Removed isBooked filter to show all slots in schedule
             },
             orderBy: { startTime: "asc" }
         });

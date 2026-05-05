@@ -2,6 +2,7 @@ import express from "express";
 import { TutorController } from "./tutor.controller";
 import { authMiddleware } from "../../middleware/auth";
 import { Role } from "../../types/role";
+import { BookingController } from "../bookings/bookings.controller";
 
 const router = express.Router();
 
@@ -38,6 +39,12 @@ router.post(
     "/upgrade",
     authMiddleware(),
     TutorController.upgradeToTutor
+);
+
+router.get(
+    "/bookings",
+    authMiddleware(Role.STUDENT, Role.TUTOR),
+    BookingController.getMyTutorBookings
 );
 
 router.get(

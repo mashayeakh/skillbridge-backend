@@ -40,6 +40,11 @@ router.put(
 );
 
 router.get(
+    "/booking/check",
+    StudentController.checkBooking
+);
+
+router.get(
     "/auth/session",
     StudentController.sessionStd
 );

@@ -55,7 +55,7 @@ export const BookingService = {
         }
 
         // create booking
-        return await prisma.booking.create({
+        const booking = await prisma.booking.create({
             data: {
                 studentId,
                 tutorProfileId,
@@ -65,6 +65,27 @@ export const BookingService = {
                 status,
             },
         });
+
+        // update availability slot status
+        if (payload.slotId) {
+            await prisma.tutorAvailability.update({
+                where: { id: payload.slotId },
+                data: { isBooked: true }
+            });
+        } else {
+            // Fallback: try to find by time range
+            await prisma.tutorAvailability.updateMany({
+                where: {
+                    tutorProfileId,
+                    startTime: { gte: startTime },
+                    endTime: { lte: endTime },
+                    isBooked: false
+                },
+                data: { isBooked: true }
+            });
+        }
+
+        return booking;
         // console.log("RE E", re)
 
     },
@@ -174,9 +195,62 @@ export const BookingService = {
             where: { tutorProfileId },
             orderBy: { startTime: "desc" },
             include: {
-                student: true,
+                student: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    }
+                },
             },
         });
+    },
+
+    async getTutorBookingsByUserId(userId: string) {
+        console.log("🔍 [BookingService] Fetching unified sessions for UserID:", userId);
+
+        // 1. Get bookings where user is the TUTOR
+        const tutorProfile = await prisma.tutorProfile.findUnique({
+            where: { userId }
+        });
+
+        const asTutor = tutorProfile ? await prisma.booking.findMany({
+            where: { tutorProfileId: tutorProfile.id },
+            include: {
+                student: { select: { id: true, name: true, email: true } }
+            }
+        }) : [];
+
+        // 2. Get bookings where user is the STUDENT
+        const asStudent = await prisma.booking.findMany({
+            where: { studentId: userId },
+            include: {
+                tutorProfile: {
+                    include: {
+                        user: { select: { email: true } }
+                    }
+                }
+            },
+        });
+
+        console.log(`📊 [BookingService] Found ${asTutor.length} as Tutor, ${asStudent.length} as Student`);
+
+        // 3. Transform student bookings to look like the UI expects (showing tutor as the 'student')
+        const transformedAsStudent = asStudent.map(b => ({
+            ...b,
+            student: {
+                id: b.tutorProfile.id,
+                name: b.tutorProfile.name + " (Tutor)",
+                email: b.tutorProfile.user.email
+            }
+        }));
+
+        const combined = [...asTutor, ...transformedAsStudent].sort((a, b) => 
+            new Date(b.startTime || 0).getTime() - new Date(a.startTime || 0).getTime()
+        );
+
+        console.log(`📦 [BookingService] Returning ${combined.length} combined sessions`);
+        return combined;
     },
 
     //upcoming bookings - means only confirmed but not completed

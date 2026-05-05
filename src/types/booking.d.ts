@@ -4,7 +4,8 @@ export type BookingInput = {
     startTime: Date,
     endTime: Date,
     status: BookingStatus,
-    price: number
+    price: number,
+    slotId?: string
 }
 
 

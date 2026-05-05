@@ -42,4 +42,28 @@ router.get(
     AdminDasbhoardController.exportUsers
 );
 
+router.get(
+    "/revenue-stats",
+    authMiddleware(Role.ADMIN),
+    AdminDasbhoardController.getRevenueStats
+);
+
+router.get(
+    "/growth-stats",
+    authMiddleware(Role.ADMIN),
+    AdminDasbhoardController.getGrowthStats
+);
+
+router.get(
+    "/category-stats",
+    authMiddleware(Role.ADMIN),
+    AdminDasbhoardController.getCategoryStats
+);
+
+router.get(
+    "/verification-requests",
+    authMiddleware(Role.ADMIN),
+    AdminDasbhoardController.getVerificationRequests
+);
+
 export const AdminDashboardRouter = router;

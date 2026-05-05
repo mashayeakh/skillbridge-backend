@@ -38,10 +38,28 @@ export const TutorService = {
         const result = await prisma.tutorProfile.findUnique({
             where: {
                 id: id
-            }, include: {
+            },
+            include: {
                 categories: {
                     include: {
                         category: true
+                    }
+                },
+                bookings: {
+                    where: {
+                        review: {
+                            isNot: null
+                        }
+                    },
+                    include: {
+                        review: true,
+                        student: {
+                            select: {
+                                name: true,
+                                email: true,
+                                image: true
+                            }
+                        }
                     }
                 }
             }

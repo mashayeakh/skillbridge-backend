@@ -9,6 +9,8 @@ export const app = express();
 
 // 1. CORS Configuration
 const allowedOrigins = [
+    process.env.APP_URL,
+    process.env.PROD_APP_URL,
     "http://localhost:3000",
     "http://localhost:4000",
     "https://skillbridgefrontend-delta.vercel.app",
